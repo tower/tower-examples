@@ -1,0 +1,10 @@
+[app]
+name = "dlthub-pipeline"
+script = "./pipeline.py"
+source = [
+	"./.dlt/config.toml",
+	"./data/fedres/*.csv",
+	"./**/*.py",
+	"./*.py",
+	"requirements.txt"
+]

@@ -1,0 +1,17 @@
+# ignore secrets, virtual environments and typical python compilation artifacts
+
+# ignore temp dlthub artifacts
+secrets.toml
+.sources
+
+# ignore basic python artifacts
+.env
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+
+# ignore scratch data
+boneyard.py
+
+# various
+.DS_Store

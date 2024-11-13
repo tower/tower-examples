@@ -1,0 +1,15 @@
+#
+# Dev artifacts
+#
+*.sw[onp]
+
+# 
+# Random test artifacts
+#
+.venv
+inference.py
+test.py
+secrets.yaml
+secrets.yml
+.DS_Store
+.idea

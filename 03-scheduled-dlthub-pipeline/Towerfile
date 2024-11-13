@@ -1,0 +1,13 @@
+[app]
+name = '03-scheduled-dlthub-pipeline'
+script = "./chess_pipeline.py"
+
+schedule = 'every 5 minutes'
+# also supports cron syntax
+# schedule = '0 */5 * * * *'
+
+source = [
+ './**/*.py',
+ './*.py',
+ 'requirements.txt'
+]

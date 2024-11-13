@@ -1,0 +1,19 @@
+# put your configuration values here
+
+[runtime]
+log_level="WARNING"  # the system log level of dlt
+# use the dlthub_telemetry setting to enable/disable anonymous usage data reporting, see https://dlthub.com/docs/telemetry
+dlthub_telemetry = true
+
+[sources.filesystem] # use [sources.readers.credentials] for the "readers" source
+bucket_url = "./data/"
+# bucket_url="https://www.federalreserve.gov/datadownload/Output.aspx?rel=G17&series=7a4d8b79258cd3a5b7a7bbad0706b79c&lastobs=7&from=&to=&filetype=csv&label=include&layout=seriesrow&type=package"
+file_glob="**/*.csv"
+
+[loader_config]
+target_schema_name="RAW"
+target_table_name="CAP_UTILIZATION"
+# write_disposition="merge"
+write_disposition="replace"
+merge_key="Description:"
+replace_strategy="truncate-and-insert"

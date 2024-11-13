@@ -1,0 +1,7 @@
+[app]
+name = "hello-world"
+script = "./task.py"
+source = [
+  "./task.py",
+]
+schedule = "0 */5 * * *"
