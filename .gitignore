@@ -13,3 +13,11 @@ secrets.yaml
 secrets.yml
 .DS_Store
 .idea
+
+#
+# Ignore for 04-dlthub-data-pond
+#
+04-dlthub-data-pond/_data/*.json.gz
+04-dlthub-data-pond/_storage/warehouse.db
+04-dlthub-data-pond/_storage/delta_lake
+04-dlthub-data-pond/deps/*.tar.gz

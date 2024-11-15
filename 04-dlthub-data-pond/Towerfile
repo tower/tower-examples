@@ -1,0 +1,11 @@
+[app]
+name = "dlthub-data-pond"
+script = "./task.sh"
+source = [
+	"./_data/*",
+	"./_storage/*",
+	"./deps/*",
+	"./requirements.txt",
+  "./task.sh",
+	"./dlt_project.yml"
+]
