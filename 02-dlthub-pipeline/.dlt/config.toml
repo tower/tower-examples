@@ -12,7 +12,9 @@ dlthub_telemetry = true
 # file_glob="**/*.csv"
 bucket_url = "s3://mango-public-data/"
 #file_glob="japan-trade-stats/custom_2017_2020.csv" # 14M rows
-file_glob="japan-trade-stats/custom_2020.csv"
+#file_glob="japan-trade-stats/custom_1988_2020.csv" # 100M rows
+file_glob="japan-trade-stats/custom_2020.csv" # 4M rows
+
 
 [loader_config]
 target_schema_name="RAW"
