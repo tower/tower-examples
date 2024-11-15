@@ -6,14 +6,18 @@ log_level="WARNING"  # the system log level of dlt
 dlthub_telemetry = true
 
 [sources.filesystem] # use [sources.readers.credentials] for the "readers" source
-bucket_url = "./data/"
+# bucket_url = "file://data/"
+# bucket_url = "./data/"
 # bucket_url="https://www.federalreserve.gov/datadownload/Output.aspx?rel=G17&series=7a4d8b79258cd3a5b7a7bbad0706b79c&lastobs=7&from=&to=&filetype=csv&label=include&layout=seriesrow&type=package"
-file_glob="**/*.csv"
+# file_glob="**/*.csv"
+bucket_url = "s3://mango-public-data/"
+#file_glob="japan-trade-stats/custom_2017_2020.csv" # 14M rows
+file_glob="japan-trade-stats/custom_2020.csv"
 
 [loader_config]
 target_schema_name="RAW"
-target_table_name="CAP_UTILIZATION"
-# write_disposition="merge"
+target_table_name="TRADE_STATS"
 write_disposition="replace"
-merge_key="Description:"
 replace_strategy="truncate-and-insert"
+# write_disposition="merge"
+# merge_key="Description:"

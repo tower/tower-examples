@@ -66,6 +66,8 @@ The value should match what's in your `secrets.toml` file.
 
 ```bash
 $ tower secrets create --name=dlt.destination.snowflake.credentials --value='snowflake://...'
+$ tower secrets create --name=dlt.sources.filesystem.credentials.aws_access_key_id --value='AK...'
+$ tower secrets create --name=dlt.sources.filesystem.credentials.aws_secret_access_key --value='ABC...'
 ```
 
 ## Running the app

@@ -1,3 +1,4 @@
 dlt[snowflake]>=0.4.3a0
 openpyxl>=3.0.0
 pandas
+dlt[s3]

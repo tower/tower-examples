@@ -4,6 +4,9 @@
 secrets.toml
 .sources
 
+# ignore local debugging artifact
+secrets.yaml
+
 # ignore basic python artifacts
 .env
 **/__pycache__/
@@ -12,6 +15,9 @@ secrets.toml
 
 # ignore scratch data
 boneyard.py
+
+# ignore the unused folder
+unused
 
 # various
 .DS_Store

@@ -1,0 +1,4 @@
+# don't push csv files to git, only push the zip archives
+*.csv
+*.zip
+*.unused
