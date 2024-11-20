@@ -4,4 +4,13 @@ script = "./task.py"
 source = [
   "./task.py",
 ]
-schedule = "0 */5 * * *"
+
+[[parameters]]
+name = "friend"
+description = "Someone that is close to you."
+default = "Steve"
+
+[[parameters]]
+name = "foe"
+description = "Something that you'd prefer to avoid."
+default = "Carl"
