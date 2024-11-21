@@ -1,0 +1,22 @@
+[app]
+name = "iceberg-write"
+script = "./iceberg_table_write.py"
+source = [
+	"./*.py",
+	"./requirements.txt"
+]
+
+[[parameters]]
+name = "PYICEBERG_CATALOG__DEFAULT__SCOPE"
+description = "The principal role your configured"
+default = "PRINCIPAL_ROLE:<principal_role_you_configured>"
+
+[[parameters]]
+name = "PYICEBERG_CATALOG__DEFAULT__URI"
+description = "The URI of the REST catalog"
+default = "<https://... for REST catalogs>"
+
+[[parameters]]
+name = "PYICEBERG_CATALOG__DEFAULT__WAREHOUSE"
+description = "The ID of the catalog"
+default = "<catalog_identifier>"

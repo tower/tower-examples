@@ -1,0 +1,4 @@
+pyiceberg
+pyarrow
+fsspec
+s3fs
