@@ -1,8 +1,8 @@
-# DLTHUB pipeline reading files into Snowflake
+# dltHub pipeline reading csv files on S3 into Snowflake
 
-All of this running in Tower :tokio_tower:! 
+All of this running in Tower! 
 
-# Setup for DLT development
+# Setup for local development
 
 This is how you get DLT up and running on your laptop during development,
 including setting up dependencies.
@@ -30,14 +30,14 @@ pip3 install -r requirements.txt
 ```
 
 ## Run the DLT pipeline
-python3 pipeline.py
+python pipeline.py
 
 This pipeline will create the CAP_UTILIZATION table in the RAW schema and 
 load it with the data from the ./data/fedres/FRG_G17.csv file
 
-# Setting up Tower
+# Deploying app to Tower cloud
 
-Tower uses the associated Towerfile to figure out how to deploy your
+Tower uses a manifest file called Towerfile to figure out how to deploy your
 application. Once it's ready to go, you just have to deploy the code, create a
 secret, and give it a run!
 
@@ -54,7 +54,7 @@ $ tower apps create --name=dlthub-pipeline
 Use the following command
 
 ```bash
-$ tower apps deploy
+$ tower deploy
 ```
 
 ## Creating the secrets
@@ -76,7 +76,7 @@ You can run the app using the Tower CLI. You don't need to specify a name, it
 will figure out what app to run based on the Towerfile.
 
 ```bash
-$ tower apps run
+$ tower run
 ```
 
 ## Check the run status
