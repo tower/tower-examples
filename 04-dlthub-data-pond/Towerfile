@@ -4,8 +4,10 @@ script = "./task.sh"
 source = [
 	"./_data/*",
 	"./_storage/*",
-	"./deps/*",
 	"./requirements.txt",
-  "./task.sh",
+	"./deps/*",
+    "./task.sh",
 	"./dlt_project.yml"
 ]
+
+
