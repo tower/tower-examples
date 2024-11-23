@@ -1,5 +1,6 @@
 from pyiceberg.catalog import load_catalog
 import polars as pl
+import os
 
 # Review https://www.tabular.io/apache-iceberg-cookbook/getting-started-python-configuration/
 # on how to pass catalog configuration parameters
@@ -11,10 +12,12 @@ import polars as pl
 # The catalog name "default" must be in the config file or in env variable names
 catalog = load_catalog("default")
 
+iceberg_table_name= os.getenv("iceberg_table")
+
 # follows the tutorial https://py.iceberg.apache.org/#connecting-to-a-catalog
 # also this tutorial https://www.tabular.io/apache-iceberg-cookbook/pyiceberg-polars/
 
-icetable = catalog.load_table("default.japan_trade_stats_2017_2020")
+icetable = catalog.load_table(iceberg_table_name)
 
 # create a Polars dataframe
 df = pl.scan_iceberg(icetable)
