@@ -12,6 +12,11 @@ description = "The name of the iceberg table"
 default = "invalid_table"
 
 [[parameters]]
+name = "AWS_REGION"
+description = "The region of S3 endpoint"
+default = "us-east-1"
+
+[[parameters]]
 name = "PYICEBERG_CATALOG__DEFAULT__SCOPE"
 description = "The principal role your configured"
 default = "PRINCIPAL_ROLE:<principal_role_you_configured>"

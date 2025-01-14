@@ -1,2 +1,4 @@
 pyiceberg
 polars
+numpy
+pyarrow
