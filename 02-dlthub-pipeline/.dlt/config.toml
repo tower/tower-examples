@@ -3,7 +3,7 @@
 [runtime]
 log_level="WARNING"  # the system log level of dlt
 # use the dlthub_telemetry setting to enable/disable anonymous usage data reporting, see https://dlthub.com/docs/telemetry
-dlthub_telemetry = true
+dlthub_telemetry = false
 
 [sources.filesystem] # use [sources.readers.credentials] for the "readers" source
 # bucket_url = "file://data/"

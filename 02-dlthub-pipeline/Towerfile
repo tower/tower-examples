@@ -8,4 +8,6 @@ source = [
 	"requirements.txt"
 ]
 
+schedule = "every 30 minutes"
+
 # "./data/japan-trade-stats/*.csv",
