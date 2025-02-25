@@ -3,8 +3,7 @@ name = "dlthub-pipeline"
 script = "./pipeline.py"
 source = [
 	"./.dlt/config.toml",
-	"./**/*.py",
-	"./*.py",
+	"./pipeline.py",
 	"requirements.txt"
 ]
 

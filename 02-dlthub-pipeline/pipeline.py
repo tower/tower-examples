@@ -1,14 +1,7 @@
 import dlt
+from dlt.sources import TDataItems
+from dlt.sources.filesystem import FileItemDict, filesystem, readers, read_csv
 
-try:
-    from .filesystem import FileItemDict, filesystem, readers, read_csv  # type: ignore
-except ImportError:
-    from filesystem import (
-        FileItemDict,
-        filesystem,
-        readers,
-        read_csv,
-    )
 
 BUCKET_URL = dlt.config["sources.filesystem.bucket_url"]
 FILE_GLOB = dlt.config["sources.filesystem.file_glob"]
@@ -44,3 +37,4 @@ def load_and_merge_csv() -> None:
 
 if __name__ == "__main__":
     load_and_merge_csv()
+
