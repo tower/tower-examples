@@ -40,7 +40,12 @@ icetable = catalog.create_table_if_not_exists(iceberg_table_name, schema=artable
 icetable.append(artable)
 
 # The scan will materialize the table on S3
-l = len(icetable.scan().to_arrow())
+records_read = len(artable)
+records_written = len(icetable.scan().to_arrow())
 
-# print the number of records in the table
-print(l)
+# print a nicely formatted summary
+print("\n=== Iceberg Write Summary ===")
+print(f"Records read from CSV: {records_read:,}")
+print(f"Records written to table: {records_written:,}")
+print(f"Table location: {icetable.location()}")
+print("==========================\n")

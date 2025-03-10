@@ -30,12 +30,28 @@ df = pl.scan_iceberg(icetable)
 # Value is in 1000s of Yen
 
 df2 = (
-    df.filter(
-        (pl.col("exp_imp") == '1')
-    ).collect().select([
+    df.select([
         pl.col("ym"),
+        pl.col("exp_imp"),
         pl.col("Value")
-    ]).group_by(['ym']).sum().sort("ym")
+    ])
+    .group_by(["ym", "exp_imp"])
+    .agg(pl.col("Value").sum().alias("total_value"))
+    .collect()
+    .pivot(
+        values="total_value",
+        index="ym",
+        columns="exp_imp",
+        aggregate_function="first"
+    )
+    .rename({"1": "exports", "2": "imports"})
+    .sort("ym")
 )
 
-print(df2)
+print("\n=== Japan Trade Statistics by Month ===")
+print("Month    | Exports (1000s Yen) | Imports (1000s Yen)")
+print("-" * 60)
+for row in df2.iter_rows():
+    month, exports, imports = row
+    print(f"{month}  | {exports:,} | {imports:,}")
+print("=" * 60)

@@ -18,7 +18,7 @@ default = "us-east-1"
 
 [[parameters]]
 name = "PYICEBERG_CATALOG__DEFAULT__SCOPE"
-description = "The principal role your configured"
+description = "The principal role you configured"
 default = "PRINCIPAL_ROLE:<principal_role_you_configured>"
 
 [[parameters]]
