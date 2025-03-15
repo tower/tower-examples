@@ -2,7 +2,7 @@
 name = '03-scheduled-dlthub-pipeline'
 script = "./chess_pipeline.py"
 
-schedule = 'every 5 minutes'
+schedule = 'every 30 hours'
 # also supports cron syntax
 # schedule = '0 */5 * * * *'
 
