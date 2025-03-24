@@ -1,0 +1,26 @@
+name: 'aggregate_issues_cache'
+
+config-version: 2
+version: '0.1'
+
+profile: 'aggregate_issues_cache'
+
+model-paths: ["models"]
+
+target-path: "target"
+clean-targets:
+    - "target"
+    - "dbt_modules"
+    - "logs"
+
+require-dbt-version: [">=1.0.0", "<2.0.0"]
+
+models:
+  aggregate_issues_cache:
+    materialized: table
+    staging:
+      materialized: view
+      +docs:
+        node_color: 'silver'
+    +docs:
+      node_color: 'gold'

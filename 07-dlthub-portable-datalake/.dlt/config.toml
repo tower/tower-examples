@@ -1,0 +1,10 @@
+# put your configuration values here
+
+[runtime]
+log_level = "WARNING" # the system log level of dlt
+# use the dlthub_telemetry setting to enable/disable anonymous usage data reporting, see https://dlthub.com/docs/reference/telemetry
+dlthub_telemetry = false
+
+[sources.github_events]
+type = "dlthub_portable_datalake.sources.github_event"
+archive = "${project_dir}../_data/2025-03-24.json.gz"

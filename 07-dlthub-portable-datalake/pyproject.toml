@@ -1,0 +1,12 @@
+[project]
+name = "07-dlthub-portable-datalake"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dbt-core>=1.9.3",
+    "dbt-duckdb>=1.9.2",
+    "dlt[duckdb]>=1.8.1",
+    "enlighten>=1.14.1",
+]
