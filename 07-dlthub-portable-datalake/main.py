@@ -17,30 +17,34 @@ def run_dbt_transformations(pipeline):
         / "dbt_aggregate_issues"
     )
 
+    # Install dbt dependencies
     subprocess.run(["dbt", "deps"], cwd=dbt_project_dir, check=True)
 
-    # Pass schema name from pipeline config
+    # Create vars dictionary and convert to JSON-like string
+    dbt_vars = {
+        "source_dataset_name": pipeline.dataset_name,
+        "source_database_name": pipeline.pipeline_name,
+        "destination_dataset_name": "github_issues_transformed",
+    }
+    vars_str = str(dbt_vars).replace("'", '"')
+
+    # Set up environment with existing env plus our additions
+    env = os.environ.copy()
+    env["DBT_DUCKDB_PATH"] = str(Path(__file__).parent / "analyze_github_issues.duckdb")
+
+    # Run dbt with cleaner argument structure
     subprocess.run(
         [
             "dbt",
             "run",
             "--profiles-dir",
-            Path(__file__).parent.absolute(),
+            str(Path(__file__).parent.absolute()),
             "--vars",
-            f"{{"
-            + f"'source_dataset_name': '{pipeline.dataset_name}',"
-            + f"'source_database_name': '{pipeline.pipeline_name}',"
-            + "'destination_dataset_name': 'github_issues_transformed',"
-            + f"}}",
+            vars_str,
         ],
         cwd=dbt_project_dir,
         check=True,
-        env={
-            **os.environ,
-            "DBT_DUCKDB_PATH": str(
-                Path(__file__).parent / "analyze_github_issues.duckdb"
-            ),
-        },
+        env=env,
     )
 
 
