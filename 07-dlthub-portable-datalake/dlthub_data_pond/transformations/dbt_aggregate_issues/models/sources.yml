@@ -1,6 +1,7 @@
 version: 2
 sources:
   - name: raw_data
+    database: '{{ var ("source_database_name") }}'
     schema: '{{ var ("source_dataset_name") }}'
     tables:
       - name: _dlt_loads
@@ -11,75 +12,75 @@ sources:
       - name: dlt_processed_load_ids
 
 models:
-      - name: dlt_processed_load_ids
-        description: "This table contains all processed load ids for incremental loading"
-      - name: _dlt_loads
-        description: "Created by DLT. Tracks completed loads"
-        columns:
-          - name: load_id
-            tests:
-              - not_null
-          - name: schema_name
-          - name: status
-            tests:
-              - not_null
-          - name: inserted_at
-            tests:
-              - not_null
-          - name: schema_version_hash
-      - name: issues_event
-        columns:
-          - name: id
-            tests:
-              - not_null
-          - name: type
-          - name: actor__id
-          - name: actor__login
-          - name: actor__display_login
-          - name: actor__gravatar_id
-          - name: actor__url
-          - name: actor__avatar_url
-          - name: repo__id
-          - name: repo__name
-          - name: repo__url
-          - name: payload__action
-          - name: payload__issue__url
-          - name: payload__issue__repository_url
-          - name: payload__issue__labels_url
-          - name: payload__issue__comments_url
-          - name: payload__issue__events_url
-          - name: payload__issue__html_url
-          - name: payload__issue__id
-          - name: payload__issue__node_id
-          - name: payload__issue__number
-          - name: payload__issue__title
-          - name: payload__issue__user
-          - name: payload__issue__labels
-          - name: payload__issue__state
-          - name: payload__issue__locked
-          - name: payload__issue__assignees
-          - name: payload__issue__comments
-          - name: payload__issue__created_at
-          - name: payload__issue__updated_at
-          - name: payload__issue__author_association
-          - name: payload__issue__body
-          - name: payload__issue__reactions
-          - name: payload__issue__timeline_url
-          - name: public
-          - name: created_at
-          - name: _dlt_load_id
-            tests:
-              - not_null
-          - name: _dlt_id
-            tests:
-              - not_null
-              - unique
-          - name: payload__issue__closed_at
-          - name: payload__issue__state_reason
-          - name: payload__issue__assignee
-          - name: org__id
-          - name: org__login
-          - name: org__gravatar_id
-          - name: org__url
-          - name: org__avatar_url
-          - name: payload__issue__milestone
+  - name: dlt_processed_load_ids
+    description: "This table contains all processed load ids for incremental loading"
+  - name: _dlt_loads
+    description: "Created by DLT. Tracks completed loads"
+    columns:
+      - name: load_id
+        tests:
+          - not_null
+      - name: schema_name
+      - name: status
+        tests:
+          - not_null
+      - name: inserted_at
+        tests:
+          - not_null
+      - name: schema_version_hash
+  - name: issues_event
+    columns:
+      - name: id
+        tests:
+          - not_null
+      - name: type
+      - name: actor__id
+      - name: actor__login
+      - name: actor__display_login
+      - name: actor__gravatar_id
+      - name: actor__url
+      - name: actor__avatar_url
+      - name: repo__id
+      - name: repo__name
+      - name: repo__url
+      - name: payload__action
+      - name: payload__issue__url
+      - name: payload__issue__repository_url
+      - name: payload__issue__labels_url
+      - name: payload__issue__comments_url
+      - name: payload__issue__events_url
+      - name: payload__issue__html_url
+      - name: payload__issue__id
+      - name: payload__issue__node_id
+      - name: payload__issue__number
+      - name: payload__issue__title
+      - name: payload__issue__user
+      - name: payload__issue__labels
+      - name: payload__issue__state
+      - name: payload__issue__locked
+      - name: payload__issue__assignees
+      - name: payload__issue__comments
+      - name: payload__issue__created_at
+      - name: payload__issue__updated_at
+      - name: payload__issue__author_association
+      - name: payload__issue__body
+      - name: payload__issue__reactions
+      - name: payload__issue__timeline_url
+      - name: public
+      - name: created_at
+      - name: _dlt_load_id
+        tests:
+          - not_null
+      - name: _dlt_id
+        tests:
+          - not_null
+          - unique
+      - name: payload__issue__closed_at
+      - name: payload__issue__state_reason
+      - name: payload__issue__assignee
+      - name: org__id
+      - name: org__login
+      - name: org__gravatar_id
+      - name: org__url
+      - name: org__avatar_url
+      - name: payload__issue__milestone

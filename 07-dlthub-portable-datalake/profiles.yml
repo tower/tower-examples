@@ -1,0 +1,8 @@
+# example profiles.yml file
+aggregate_issues_cache:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "/Users/rohit/projects/towerdev/tower-examples/07-dlthub-portable-datalake/analyze_github_issues.duckdb"
+      schema: "github_issues_transformed"

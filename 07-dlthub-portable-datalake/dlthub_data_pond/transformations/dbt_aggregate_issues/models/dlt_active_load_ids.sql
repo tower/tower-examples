@@ -1,7 +1,7 @@
 /* check if the destination already has a list of processed ids
 if not we will process all loads with status 0 (==success) */
 {% set active_ids_exist = adapter.get_relation(
-        database=this.database ,
+        database=this.database,
         schema=this.schema,
         identifier="dlt_processed_load_ids" ) %}
 
