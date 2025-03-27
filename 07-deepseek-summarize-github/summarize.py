@@ -1,13 +1,11 @@
+import os
+from pprint import pprint
 
 from core.readers.github import ReadGithubIssue
-
 from core.inference.huggingface import InferWithHuggingfaceHub
 from core.inference.ollama import InferWithOllamaChat
 from core.transforms.github import GithubIssueToChat
 from core.writers.dlt import WriteFile
-import os
-
-from pprint import pprint
 
 
 # Get Parameters that will be passed in any Environment

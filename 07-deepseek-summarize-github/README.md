@@ -2,20 +2,19 @@
 
 In this example we will develop a Tower app that uses the Deepseek R1 model to analyze a GitHub issue and its comments and proposes the best course of action to address the issue. While developing and debugging, we will use the local GPUs of the dev machine for inference. Once we move the app to a production environment, we will use a serverless inference provider. 
  
-This example demonstrates the "local dev, cloud prod" capabilities of Tower:
-- Use ollama to host a local inference server for a smaller 14B version of the Deepseek R1 model
-- Use the local GPUs (e.g. Apple Silicon) to save on inference costs during development and avoid inference rate throttling
-- Use Tower's --local mode to run the app on your dev machine  
-- Once you are happy with your app, move the app to Tower cloud, and use Together.AI as the inference provider
-- To maintain flexibility with inference providers, use HuggingFace Hub as the router of inference calls
+This example demonstrates the local development and cloud deployment capabilities of Tower:
+- It uses Tower's --local mode to run the app on your dev machine  
+- You can use local GPUs (e.g. Apple Silicon) to save on inference costs during development and avoid inference rate throttling
+- Once you are done developing your app, you can deploy the app to the Tower cloud
+
+The example also shows the flexibility of integrations that are possible with Tower:
+- You can use ollama to host a local inference server that the Tower app will use in local mode
+- You can use Together.AI as the serverless inference provider
+- To maintain flexibility with inference providers, we will use Hugging Face Hub as the router of inference calls
 
 
-
-## Tower Actions Framework
-
-In this example we also introduce a simple framework of typical data+ai app actions (read data inputs, transform them, run inference, write data outputs) for Python.
-
-## Install and Set Up dependencies
+## Set Up Inference Providers
+Here, you will set up local and serverless inference providers. Tower does not typically require this step, but in our example we will use these inference providers to demonstrate local inference capabilities. 
 
 ### Install ollama and a small Deepseek R1 model
 
@@ -45,6 +44,10 @@ In this example we use Together.ai as our serverless inference provider for the 
 ### Enable Together.ai in Hugging Face Hub
 
 Follow this [quickstart](https://docs.together.ai/docs/quickstart-using-hugging-face-inference) to enable Together.ai in the Hugging Face Hub. You will enter your Together.ai access token in the Hugging Face Hub settings. Once you do that, you can use your Hugging Face access token to make inference calls from your Tower app. 
+
+## Set up Tower
+
+Go through the Tower [Quickstart](https://docs.tower.dev/docs/getting-started/quick-start) guide, if you haven't already.
 
 ## Create the app in Tower
 
