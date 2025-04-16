@@ -3,16 +3,29 @@
 #
 *.sw[onp]
 
+# OS generated files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# temp python files
+**/__pycache__/
+
 # 
 # Random test artifacts
 #
 .venv
-inference.py
-test.py
 secrets.yaml
 secrets.yml
-.DS_Store
 .idea
+
+# local and unfinished code
+**/*_local.py
+**/*_local.py
 
 #
 # Ignore for 04-dlthub-data-pond
