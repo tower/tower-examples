@@ -21,3 +21,16 @@ secrets.yml
 04-dlthub-data-pond/_storage/warehouse.db
 04-dlthub-data-pond/_storage/delta_lake
 04-dlthub-data-pond/deps/*.tar.gz
+
+#
+# Ignore for 07-dlthub-portable-datalake
+#
+07-dlthub-portable-datalake/dlthub_data_pond/transformations/dbt_aggregate_issues/logs/*
+07-dlthub-portable-datalake/dlthub_data_pond/transformations/dbt_aggregate_issues/target/*
+07-dlthub-portable-datalake/.user.yml
+07-dlthub-portable-datalake/.python-version
+*.duckdb
+
+*/_local.py
+
+*.pyc
