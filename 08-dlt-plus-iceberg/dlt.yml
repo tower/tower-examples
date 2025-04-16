@@ -1,0 +1,27 @@
+profiles:
+  # profiles allow you to configure different settings for different environments
+  dev: {}
+  prod: {}
+
+sources:
+  github_events:
+    type: github.source
+# # your sources are the data sources you want to load from
+# sources:
+#   github_events:
+#     type: rest_api
+
+# # your destinations are the databases where your data will be saved
+# destinations:
+#   github_events_ddb:
+#     type: duckdb
+
+# # your datasets are the datasets on your destinations where your data will go
+# datasets: {}
+
+# # your pipelines orchestrate data loading actions
+# pipelines:
+#   github_events_pipeline:
+#     source: github_events
+#     destination: github_events_ddb
+#     dataset_name: github_events_raw

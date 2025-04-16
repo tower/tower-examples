@@ -8,3 +8,7 @@ dlthub_telemetry = false
 [sources.github_events]
 type = "dlthub_portable_datalake.sources.github_event"
 archive = "${project_dir}../_data/2025-03-24.json.gz"
+
+[destination.iceberg]
+catalog_uri = "awsglue://your-glue-catalog"
+warehouse = "s3://your-iceberg-warehouse"
