@@ -14,6 +14,7 @@ Thumbs.db
 
 # temp python files
 **/__pycache__/
+*.pyc
 
 # 
 # Random test artifacts
@@ -22,10 +23,16 @@ Thumbs.db
 secrets.yaml
 secrets.yml
 .idea
+.run
+.vscode
 
 # local and unfinished code
 **/*_local.py
 **/*_local.py
+*/_local.py
+
+#output files
+out
 
 #
 # Ignore for 04-dlthub-data-pond
@@ -34,6 +41,7 @@ secrets.yml
 04-dlthub-data-pond/_storage/warehouse.db
 04-dlthub-data-pond/_storage/delta_lake
 04-dlthub-data-pond/deps/*.tar.gz
+04-dlthub-data-pond/deps/*.whl
 
 #
 # Ignore for 07-dlthub-portable-datalake
@@ -44,6 +52,6 @@ secrets.yml
 07-dlthub-portable-datalake/.python-version
 *.duckdb
 
-*/_local.py
 
-*.pyc
+
+
