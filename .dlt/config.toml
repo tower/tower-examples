@@ -1,0 +1,6 @@
+[runtime]
+log_level="WARNING"  # the system log level of dlt
+dlthub_telemetry = false
+
+[normalize.data_writer]
+disable_compression=true # make jsonl files more easily readable
