@@ -1,0 +1,12 @@
+[app]
+name = "analyze-data-in-iceberg"
+script = "./analyze_iceberg_table.py"
+source = [
+	"./*.py",
+	"./requirements.txt"
+]
+
+[[parameters]]
+name = "ANALYZE_DATE"
+description = "The date as of which you want recommendations"
+default = "2025-04-16"

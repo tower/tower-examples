@@ -1,4 +1,0 @@
-pyiceberg
-polars
-numpy
-pyarrow
