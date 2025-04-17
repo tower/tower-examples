@@ -1,0 +1,31 @@
+{
+  "ticker": "MSFT",
+  "date": "2025-04-06",
+  "open": 307.07,
+  "close": 311.76,
+  "volume": 72850773
+}{
+  "ticker": "AAPL",
+  "date": "2025-04-06",
+  "open": 153.53,
+  "close": 156.07,
+  "volume": 23464462
+}{
+  "ticker": "AMZN",
+  "date": "2025-04-06",
+  "open": 155.07,
+  "close": 152.27,
+  "volume": 18059558
+}{
+  "ticker": "GOOGL",
+  "date": "2025-04-06",
+  "open": 133.75,
+  "close": 130.26,
+  "volume": 46086870
+}{
+  "ticker": "NVDA",
+  "date": "2025-04-06",
+  "open": 465.34,
+  "close": 462.37,
+  "volume": 75761220
+}

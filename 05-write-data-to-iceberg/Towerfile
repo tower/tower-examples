@@ -1,0 +1,12 @@
+[app]
+name = "write-data-to-iceberg"
+script = "./write_iceberg_table.py"
+source = [
+	"./write_iceberg_table.py",
+	"./requirements.txt"
+]
+
+[[parameters]]
+name = "FILE_DATE"
+description = "The date of the file that contains our sample data."
+default = ""

@@ -14,7 +14,7 @@ secret, and give it a run!
 The app name should match what's in the Towerfile in this directory.
 
 ```bash
-$ tower apps create --name=iceberg-write
+$ tower apps create --name=write-data-to-iceberg
 ```
 
 ## Deploying the app
@@ -25,24 +25,10 @@ Use the following command
 $ tower deploy
 ```
 
-## Creating the secrets
+## Setup our Iceberg Catalog
 
-We create these secrets in Tower and they are automatically passed to your app.
-
-To access S3, we need to define AWS credentials
-
-```bash
-$ tower secrets create --name=AWS_ACCESS_KEY_ID --value='AK...'
-$ tower secrets create --name=AWS_SECRET_ACCESS_KEY --value='ABC...'
-```
-
-To access the Polaris catalog, we need to define another credential. 
-Three additional settings to access the Polaris catalog will be passed to the app
-via parameters.
-
-```bash
-$ tower secrets create --name=PYICEBERG_CATALOG__DEFAULT__CREDENTIAL --value='o...=:L...='
-```
+You need to create a new catalog with name `default` (which the Tower SDK looks
+for by default) to run this app successfully. You can do this in the Tower app.
 
 
 ## Running the app
@@ -54,9 +40,7 @@ To run locally
 
 ```bash
 $ tower run --local \
- --parameter=PYICEBERG_CATALOG__DEFAULT__SCOPE='PRINCIPAL_ROLE:...' \
- --parameter=PYICEBERG_CATALOG__DEFAULT__URI='https://...snowflakecomputing.com/polaris/api/catalog' \
- --parameter=PYICEBERG_CATALOG__DEFAULT__WAREHOUSE='...'	
+  --parameter=FILE_DATE='2025-03-18'
 ```
 
 To run on Tower cloud, remove --local
@@ -77,6 +61,6 @@ to supply an app name as well as a run number. Use the `show` command to get
 both of those values.
 
 ```bash
-$ tower apps logs iceberg-write#1
+$ tower apps logs write-data-to-iceberg#1
 # ...
 ```
