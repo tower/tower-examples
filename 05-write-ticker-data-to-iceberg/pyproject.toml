@@ -9,5 +9,6 @@ dependencies = [
     "tower>=0.3.13",
     "pyiceberg",
     "pyarrow",
-    "yfinance"
+    "yfinance",
+    "h11>=0.16.0"
 ]
