@@ -1,0 +1,15 @@
+[app]
+name = "trim-ticker-table"
+script = "./task.py"
+source = [
+	"./*.py",
+	"./requirements.txt"
+]
+
+schedule = "every day at 10:00"
+
+[[parameters]]
+name = "TIME_WINDOW_DAYS"
+description = "The number of days of history to keep"
+default = "31"
+

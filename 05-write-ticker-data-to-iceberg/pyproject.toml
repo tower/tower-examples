@@ -1,0 +1,13 @@
+[project]
+name = "05-write-ticker-data-to-iceberg"
+version = "0.1.0"
+description = "Downloads ticker data like open, close, volume from YFinance and writes to an Iceberg table"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.29.0",
+    "tower>=0.3.13",
+    "pyiceberg",
+    "pyarrow",
+    "yfinance"
+]

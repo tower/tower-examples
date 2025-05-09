@@ -1,0 +1,20 @@
+[app]
+name = "write-ticker-data-to-iceberg"
+script = "./task.py"
+source = [
+	"./*.py",
+	"./requirements.txt"
+]
+
+schedule = "every day at 9:00"
+
+[[parameters]]
+name = "PULL_DATE"
+description = "The date of stock data to pull. If no date is entered, the app will take yesterday's date."
+default = ""
+
+[[parameters]]
+name = "TICKERS"
+description = "Comma-separated list of stock tickers"
+default = "MSFT,AAPL,AMZN,GOOGL,NVDA"
+

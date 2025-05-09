@@ -1,0 +1,12 @@
+[project]
+name = "11-trim-ticker-table"
+version = "0.1.0"
+description = "Remove old historical data in Ticker table"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.29.0",
+    "tower>=0.3.13",
+    "pyiceberg",
+    "pyarrow"
+]
