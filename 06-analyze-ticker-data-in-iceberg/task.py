@@ -1,6 +1,6 @@
 import tower
 import polars as pl
-
+from datetime import datetime, timedelta
 # We need the OS package to get parameters from the environment.
 import os
 
@@ -92,7 +92,14 @@ def analyze_dataframe(df: pl.DataFrame) -> pl.DataFrame:
 #
 
 def main():
-    date_str = os.getenv("ANALYZE_DATE", "2025-04-16")
+    analyze_date_str = os.getenv("ANALYZE_DATE", "")
+
+    # Set analyze_date_str to yesterday if empty
+    if analyze_date_str == "":
+        analyze_date = (datetime.now() - timedelta(days=1))
+        analyze_date_str = analyze_date.strftime("%Y-%m-%d")
+    else:
+        analyze_date = datetime.strptime(analyze_date_str, "%Y-%m-%d")
 
     ###
     #
@@ -108,9 +115,7 @@ def main():
     ###
     df = analyze_dataframe(df)
 
-    from datetime import datetime
-    parsed_date = datetime.strptime(date_str, "%Y-%m-%d")
-    df = df.filter(pl.col("date") == parsed_date)
+    df = df.filter(pl.col("date") == analyze_date)
 
     # This is the final DataFrame with the analysis fully applied. We output it
     # so we can see what's going on.

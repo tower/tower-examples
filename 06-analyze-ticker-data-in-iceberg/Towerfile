@@ -1,12 +1,14 @@
 [app]
-name = "analyze-data-in-iceberg"
-script = "./analyze_iceberg_table.py"
+name = "analyze-ticker-data-in-iceberg"
+script = "./task.py"
 source = [
 	"./*.py",
 	"./requirements.txt"
 ]
 
+schedule = "every day at 9:30"
+
 [[parameters]]
 name = "ANALYZE_DATE"
 description = "The date as of which you want recommendations"
-default = "2025-04-16"
+default = ""

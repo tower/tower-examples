@@ -1,12 +1,12 @@
 [app]
-name = "write-ticker-data-to-iceberg"
+name = "fan-out-ticker-runs"
 script = "./task.py"
-source = [
-	"./*.py",
+source= [
+	"./task.py",
 	"./requirements.txt"
 ]
 
-schedule = "every day at 9:00"
+schedule = "every day at 9:30"
 
 [[parameters]]
 name = "PULL_DATE"
@@ -16,5 +16,4 @@ default = ""
 [[parameters]]
 name = "TICKERS"
 description = "Comma-separated list of stock tickers"
-default = "MSFT,AAPL,GOOGL,NVDA"
-
+default = "AMZN,META,TSLA"

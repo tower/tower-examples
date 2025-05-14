@@ -1,0 +1,10 @@
+[project]
+name = "fan-out-ticker-runs"
+version = "0.1.0"
+description = "This app will span multiple runs of the write-ticker-data-to-iceberg app, one per ticker"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "tower>=0.3.14",
+    "pyarrow",
+]

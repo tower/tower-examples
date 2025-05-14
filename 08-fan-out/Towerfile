@@ -1,8 +1,0 @@
-[app]
-name = "orchestration"
-script = "./task.py"
-source= [
-	"./task.py",
-	"./requirements.txt"
-]
-
