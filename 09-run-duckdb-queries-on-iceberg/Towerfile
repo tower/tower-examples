@@ -1,0 +1,7 @@
+[app]
+name = 'run-duckdb-queries-on-iceberg'
+script = './main.py'
+source = [
+	'./main.py',
+	'./requirements.txt'
+]
