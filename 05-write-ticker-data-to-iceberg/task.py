@@ -87,7 +87,7 @@ def main():
         ("volume", pa.int64()),
     ])
 
-    table = tower.tables("daily_ticker_data").create_if_not_exists(SCHEMA)
+    table = tower.tables("daily_ticker_data", catalog="r2-catalog").create_if_not_exists(SCHEMA)
     
   
     ###

@@ -106,7 +106,7 @@ def main():
     # Step 1: Load the Iceberg table into a Polars DataFrame.
     #
     ###
-    df = tower.tables("daily_ticker_data").load().read()
+    df = tower.tables("daily_ticker_data", catalog="r2-catalog").load().read()
 
     ###
     #
