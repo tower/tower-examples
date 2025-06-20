@@ -1,0 +1,23 @@
+[app]
+name = "ticker-update-agent"
+short_description = "Update ticker data for a given list of tickers"
+script = "./agent.py"
+source = [
+	"./*.py",
+	"./requirements.txt"
+]
+
+[[parameters]]
+name = "PROMPT"
+description = "The prompt to use for the agent"
+default = ""
+
+[[parameters]]
+name = "TICKERS"
+description = "Comma-separated list of stock tickers, e.g. AMZN, NFLX, MSFT"
+default = "NVDA"
+
+[[parameters]]
+name = "PULL_DATE"
+description = "The date of stock data to pull. If no date is entered, the app will take yesterday's date."
+default = "2025-06-17"

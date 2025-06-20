@@ -1,0 +1,17 @@
+[project]
+name = "13-ticker-update-agent"
+version = "0.1.0"
+description = "Update ticker data for a given list of tickers"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.29.0",
+    "tower>=0.3.16",
+    "pyiceberg",
+    "pyarrow",
+    "langchain>=0.3.25",
+    "langchain_openai",
+    "langsmith",
+    "langchain-community",
+    "yfinance",
+]
