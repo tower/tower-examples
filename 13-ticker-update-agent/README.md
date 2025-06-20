@@ -1,7 +1,7 @@
 # Use an Agent to maintain ticker data in an Iceberg table
 
 This agent is based on the LangChain framework and 
-maintains the ticker data for the given list of tickers.
+maintains ticker data (open/close prices and volume) for a list of tickers.
 
 Before getting the stock data from Yahoo Finance, 
 it checks if the data is already available.
@@ -13,7 +13,7 @@ it checks if the data is already available.
 Following secrets need to be defined in Tower
 
 * LANGCHAIN_API_KEY - see [docs](https://docs.smith.langchain.com/administration/how_to_guides/organization_management/create_account_api_key)
-* OPENAI_API_KEY - see here https://platform.openai.com/api-keys
+* OPENAI_API_KEY - see [here](https://platform.openai.com/api-keys)
 
 ## Iceberg catalogs
 
