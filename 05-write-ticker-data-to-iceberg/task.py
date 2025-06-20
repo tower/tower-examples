@@ -1,5 +1,4 @@
 import tower
-import polars as pl
 from datetime import datetime, timedelta
 import pyarrow as pa
 import yfinance as yf
@@ -88,7 +87,6 @@ def main():
     ])
 
     table = tower.tables("daily_ticker_data").create_if_not_exists(SCHEMA)
-    
   
     ###
     # Step 3: Upsert new stats into the table. 
