@@ -8,8 +8,8 @@ source = [
 ]
 
 [[parameters]]
-name = "PROMPT"
-description = "The prompt to use for the agent"
+name = "USER_INPUT"
+description = "The user input to use for the agent"
 default = ""
 
 [[parameters]]

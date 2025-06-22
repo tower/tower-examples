@@ -85,15 +85,15 @@ def main():
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     
     lsclient = LangSmithClient()
-    system_prompt = lsclient.pull_prompt("hwchase17/react")
+    prompt = lsclient.pull_prompt("hwchase17/react")
 
-    agent = create_react_agent(llm=llm, tools=tools, prompt=system_prompt)
+    agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
     executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
 
     # Build the user prompt and action input
-    user_prompt = os.getenv("PROMPT")
-    if not user_prompt:
-        user_prompt = """
+    user_input = os.getenv("USER_INPUT")
+    if not user_input:
+        user_input = """
         Get the ticker data for the given pull date and the given list of tickers. 
         Get the ticker data one by one. 
         Before getting the data for each ticker, check if it is already available.
@@ -101,10 +101,10 @@ def main():
 
     tickers, pull_date = os.getenv("TICKERS"), os.getenv("PULL_DATE")
     input_params = {"PULL_DATE": pull_date, "TICKERS": tickers}
-    full_prompt = f"{user_prompt}\n\nAction Input: {json.dumps(input_params)}"
+    full_input = f"{user_input}\n\nAction Input: {json.dumps(input_params)}"
  
     # Invoke the agent
-    response = executor.invoke({"input": full_prompt})
+    response = executor.invoke({"input": full_input})
     print(response)
 
 if __name__ == "__main__":
