@@ -84,18 +84,18 @@ class ReadGithub(Read):
 
         return out
 
-    def do(self, base_github_url, endpoints, *args:Any, **kwargs: Any):
-            # sso 3/9/25
-            source = self.github_source(self, base_github_url=base_github_url, entityspecs=endpoints)
-            super().do(source, *args, **kwargs )
+    def do(self, base_github_url, endpoints, *args:Any, **kwargs: Any) -> Dict:
+        # sso 3/9/25
+        source = self.github_source(self, base_github_url=base_github_url, entityspecs=endpoints)
+        return super().do(source, *args, **kwargs )
 
 
 class ReadGithubIssue(ReadGithub):
 
-    def do(self, repo_owner, repo, issue_number, *args:Any, **kwargs: Any):
+    def do(self, repo_owner, repo, issue_number, *args:Any, **kwargs: Any) -> Dict:
         base_github_url = f"https://api.github.com/repos/{repo_owner}/{repo}"
         issues_endpoint = self.build_entityspec(entity="issues", issue_number=issue_number)
         comments_endpoint = self.build_entityspec(entity="comments", issue_number=issue_number)
         endpoints = [issues_endpoint,comments_endpoint]
-        super().do(base_github_url, endpoints, *args, **kwargs)
+        return super().do(base_github_url, endpoints, *args, **kwargs)
 

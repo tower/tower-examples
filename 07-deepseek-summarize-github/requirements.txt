@@ -1,4 +1,0 @@
-dlt==1.4.0
-ollama
-transformers
-huggingface_hub

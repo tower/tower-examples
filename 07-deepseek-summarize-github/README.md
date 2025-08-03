@@ -34,7 +34,7 @@ You should [sign up for Hugging Face](https://huggingface.co/join) and get the H
 ### Install Hugging Face Hub
 
 ```
-pip install huggingface_hub>=0.29.0
+pip install huggingface_hub>=0.34.3
 ```
 
 ### Sign Up for Together.ai
@@ -49,32 +49,52 @@ Follow this [quickstart](https://docs.together.ai/docs/quickstart-using-hugging-
 
 Go through the Tower [Quickstart](https://docs.tower.dev/docs/getting-started/quick-start) guide, if you haven't already.
 
-## Create the app in Tower
-
-The app name should match what's in the Towerfile in this directory.
-
-```bash
-tower apps create --name=deepseek-summarize
-```
 
 ## Deploy the app to Tower
+
+In terminal, type this command to deploy the app to Tower
 
 ```bash
 tower deploy
 ```
 
+
 ## Creating app secrets
 
 Secrets in Tower are environment variables that will automatically be passed to your app.
 
-When running in local mode, no secrets are needed for this app.
+The following secrets need to be defined in Tower's environments:
 
-When running in the "prod" environment, you will need to define a secret for the Hugging Face token to run the app.
+* `TOWER_INFERENCE_ROUTER` - can be set to "ollama" or "hugging_face_hub" when running the app in local mode. Must be set to "hugging_face_hub" when doing serverless inference
+* `TOWER_INFERENCE_ROUTER_API_KEY` - when using ollama inference router, the API key can be left unset. When using the "hugging_face_hub" inference router, should be set to the Hugging Face token 
+* `TOWER_INFERENCE_PROVIDER` - should be set to a Hugging Face Hub Inference provider like "together" or others
+
+Curious about Inference Routers and Inference Providers? 
+
+When using the Hugging Face Hub, it will serve as a *router* of inference requests to various inference *providers* on the platform, including "together". 
+
+When using Ollama as the inference endpoint, "ollama" is both the router and the provider. 
+
+To create one of these secrets, use the CLI or the Web UI:
+
+When executing the app in local mode:
 
 ```bash
 tower secrets create --environment="prod" \
-  --name=HF_TOKEN --value='<your Hugging Face token>'
+  --name=TOWER_INFERENCE_ROUTER --value="hugging_face_hub"
+
+tower secrets create --environment="prod" \
+  --name=TOWER_INFERENCE_ROUTER_API_KEY --value="hf_1234567"
+
+tower secrets create --environment="prod" \
+  --name=TOWER_INFERENCE_PROVIDER --value="together"
 ```
+
+## Iceberg catalogs
+
+This example expects an Iceberg catalog with the slug `default` to be present in the environment where it is executed. 
+This catalog will be used to write into a table `issue_threads` in the namespace `github`. See this [guide](https://docs.tower.dev/docs/concepts/environments#catalogs) for instructions for setting up the `default` catalog.
+
 
 ## Running the app
 
@@ -97,8 +117,6 @@ tower run --local \
   --parameter=gh_repo_owner='dlt-hub' \
   --parameter=gh_repo='dlt' \
   --parameter=gh_issue_number=933 \
-  --parameter=out_last_response_bucket_url='./out/gh_summary_last_response' \
-  --parameter=out_full_chat_bucket_url='./out/gh_summary_full_chat' \
   --parameter=model_to_use='deepseek-r1:14b'
 ```
 
@@ -123,15 +141,11 @@ tower run --environment="prod" \
   --parameter=gh_repo_owner='dlt-hub' \
   --parameter=gh_repo='dlt' \
   --parameter=gh_issue_number=933 \
-  --parameter=out_last_response_bucket_url='./out/gh_summary_last_response' \
-  --parameter=out_full_chat_bucket_url='./out/gh_summary_full_chat' \
   --parameter=model_to_use='deepseek-ai/DeepSeek-R1' \
-  --parameter=inference_provider='together' \
   --parameter=max_tokens=1000
 ```
 
-Two new parameters are relevant for "prod" runs: 
-- inference_provider : The inference provider hosting the DeepSeek model, in our case 'together'
+A new parameter is relevant for "prod" runs: 
 - max_tokens : The maximum length of output, measured in tokens
 
 

@@ -2,7 +2,7 @@ import dlt
 from dlt.common.typing import TDataItems
 from dlt.common.schema import TTableSchema
 from dlt.common.destination import Destination
-from typing import Any
+from typing import Any, Dict
 from core.actions import Action
 
 # https://dlthub.com/devel/dlt-ecosystem/destinations/destination
@@ -41,9 +41,10 @@ class Read(Action):
         self.readitems={}
         self.readtableschema={}
 
-    def do(self, *args:Any, **kwargs: Any):
+    def do(self, *args:Any, **kwargs: Any) -> Dict:
         self.clean_state()
         self.dltpipeline.run(*args, **kwargs)
+        return self.readitems
 
 
 
