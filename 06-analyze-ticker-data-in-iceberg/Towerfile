@@ -3,7 +3,7 @@ name = "analyze-ticker-data-in-iceberg"
 script = "./task.py"
 source = [
 	"./*.py",
-	"./requirements.txt"
+	"./pyproject.toml"
 ]
 
 schedule = "every day at 9:30"

@@ -3,9 +3,13 @@ name = "06-analyze-ticker-data-in-iceberg"
 version = "0.1.0"
 description = "Make buy/sell recommendations for stocks using LLMs and ticker data in Iceberg tables"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.2.4",
     "scikit-learn>=1.6.1",
-    "tower>=0.3.13",
+    "tower>=0.3.24",
+    "polars>=1.29.0",
+    "pyiceberg",
+    "pyarrow",
 ]
+
