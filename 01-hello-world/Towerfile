@@ -1,9 +1,6 @@
 [app]
 name = "hello-world"
 script = "./task.py"
-source = [
-  "./task.py",
-]
 
 [[parameters]]
 name = "friend"

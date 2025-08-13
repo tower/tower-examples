@@ -1,0 +1,10 @@
+[project]
+name = "02-dlthub-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dlt[filesystem,snowflake]==1.4.0",
+    "pandas>=2.3.1",
+]

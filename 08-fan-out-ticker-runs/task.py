@@ -27,13 +27,7 @@ def main():
     # Process each ticker's data
     child_runs = []
     for ticker in ticker_list:
-
-        params = {
-            "PULL_DATE": f"{pull_date_str}",
-            "TICKERS": f"{ticker}"
-        }
-
-        run = tower.run_app("write-ticker-data-to-iceberg", parameters=params)
+        run = tower.run_app("hello-world")
         child_runs.append(run)
 
     ###
