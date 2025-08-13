@@ -1,0 +1,3 @@
+[app]
+name = "example-marimo-app"
+script = "./main.py"

@@ -1,0 +1,12 @@
+[project]
+name = "marimo-notebook"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.116.1",
+    "marimo>=0.14.17",
+    "matplotlib>=3.10.5",
+    "uvicorn>=0.35.0",
+]
