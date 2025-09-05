@@ -6,8 +6,6 @@ source= [
 	"./requirements.txt"
 ]
 
-schedule = "every day at 9:30"
-
 [[parameters]]
 name = "PULL_DATE"
 description = "The date of stock data to pull. If no date is entered, the app will take yesterday's date."

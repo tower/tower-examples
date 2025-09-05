@@ -6,8 +6,6 @@ source = [
 	"./pyproject.toml"
 ]
 
-schedule = "every day at 9:30"
-
 [[parameters]]
 name = "ANALYZE_DATE"
 description = "The date as of which you want recommendations"

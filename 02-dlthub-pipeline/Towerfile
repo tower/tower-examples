@@ -6,6 +6,3 @@ source = [
 	"./pipeline.py",
 	"requirements.txt"
 ]
-
-schedule = "every 24 hours"
-
