@@ -1,0 +1,16 @@
+olist:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: 'olist.duckdb'
+      schema: analytics
+    postgres:
+      type: postgres
+      host: localhost
+      user: olist
+      password: olist
+      dbname: olist
+      port: 5432
+      schema: analytics
+      threads: 4

@@ -1,0 +1,17 @@
+# Python venvs and caches
+.venv/
+.env
+__pycache__/
+*.pyc
+
+# dbt build artifacts
+dbt_packages/
+target/
+logs/
+
+# Project-specific state
+profiles.yml
+olist_dbt/olist.duckdb
+
+# MacOS
+.DS_Store

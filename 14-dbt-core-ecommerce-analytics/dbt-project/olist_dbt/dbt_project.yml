@@ -1,0 +1,46 @@
+name: 'olist_dbt'
+version: '1.0.0'
+config-version: 2
+require-dbt-version:
+  - '>=1.10.0'
+  - '<2.0.0'
+
+profile: 'olist'
+
+model-paths: ['models']
+seed-paths: ['seeds']
+macro-paths: ['macros']
+snapshot-paths: ['snapshots']
+
+models:
+  olist_dbt:
+    +materialized: view
+    staging:
+      +tags: ['staging']
+    intermediate:
+      +materialized: table
+      +tags: ['intermediate']
+    marts:
+      +materialized: table
+      core:
+        +tags: ['mart', 'core']
+
+seeds:
+  olist_dbt:
+    +quote_columns: false
+    +column_types:
+      olist_order_items_dataset:
+        price: numeric
+        freight_value: numeric
+      olist_order_payments_dataset:
+        payment_value: numeric
+      olist_orders_dataset:
+        order_purchase_timestamp: timestamp
+        order_approved_at: timestamp
+        order_delivered_carrier_date: timestamp
+        order_delivered_customer_date: timestamp
+        order_estimated_delivery_date: date
+
+vars:
+  start_date: '2016-01-01'
+  end_date: '2018-12-31'

@@ -1,0 +1,16 @@
+version: 2
+exposures:
+  - name: olist_core_look
+    type: dashboard
+    maturity: low
+    url: https://bi.example.com/dashboards/olist-core
+    description: Core Olist KPI dashboard consuming dim_* and fact_order_items
+    depends_on:
+      - ref('fact_order_items')
+      - ref('dim_customers')
+      - ref('dim_products')
+      - ref('dim_sellers')
+      - ref('dim_geography')
+    owner:
+      name: Data Team
+      email: data@example.com
