@@ -19,7 +19,7 @@ This Tower example app shows how to run a dbt Core project with the Python API i
 
 > ℹ️ Store `DBT_PROFILE_YAML` as a Tower secret so credentials never hit version control. You can still use `env_var()` inside the YAML to defer sensitive values to other secrets.
 
-Advanced flags such as `DBT_THREADS`, `DBT_STATE_DIR`, or `DBT_VARS_JSON` remain supported—pass them with `tower run -p VAR=value` or extend the Towerfile if your workflow needs them regularly.
+Advanced flags such as `DBT_THREADS` or `DBT_VARS_JSON` remain supported—set them with `tower run -p VAR=value` or extend the Towerfile for custom workflows.
 
 ## Local setup
 1. Ensure Python 3.11+ is available.

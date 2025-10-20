@@ -81,7 +81,6 @@ class DbtRunnerConfig:
     target: str | None = None
     threads: int | None = None
     vars_payload: Mapping[str, object] | str | None = None
-    state_dir: Path | str | None = None
     full_refresh: bool = False
     full_refresh_commands: Sequence[str] = ("seed", "run", "build")
     extra_env: Mapping[str, str] | None = None
@@ -91,9 +90,6 @@ class DbtRunnerConfig:
     def __post_init__(self) -> None:
         if not isinstance(self.project_path, Path):
             self.project_path = Path(self.project_path)
-        if self.state_dir is not None:
-            if not isinstance(self.state_dir, Path):
-                self.state_dir = Path(self.state_dir)
         if not self.commands:
             self.commands = DEFAULT_COMMAND_PLAN
         if not isinstance(self.commands, tuple):
@@ -182,9 +178,6 @@ def run_dbt_workflow(config: DbtRunnerConfig) -> list[object]:
                     args, "--full-refresh"
                 ):
                     args.append("--full-refresh")
-
-                if config.state_dir and not _has_flag(args, "--state"):
-                    args.extend(["--state", str(config.state_dir)])
 
                 if vars_payload and not _has_flag(args, "--vars"):
                     args.extend(["--vars", vars_payload])

@@ -39,14 +39,20 @@ def _parse_vars(value: str | None):
 def main() -> None:
     profile_payload = load_profile_from_env()
 
+    # Absolute path to the dbt project directory (contains dbt_project.yml).
     project_path = Path(_get_env_value("DBT_PROJECT_PATH") or "dbt-project/olist_dbt")
+    # Command plan, e.g. "deps, seed --full-refresh, build --select state:modified+".
     commands = parse_command_plan(_get_env_value("DBT_COMMANDS"))
+    # Optional selector applied to commands that don't already pass --select.
     selector = _get_env_value("DBT_SELECT")
+    # Override target name from the profile; blank uses the profile default.
     target = _get_env_value("DBT_TARGET")
+    # Optional thread count; falls back to profile value when unset.
     threads = _parse_threads(_get_env_value("DBT_THREADS"))
-    state_dir_raw = _get_env_value("DBT_STATE_DIR")
+    # Optional vars payload (JSON/YAML) passed to dbt.
     vars_payload = _parse_vars(_get_env_value("DBT_VARS_JSON"))
 
+    # Toggle --full-refresh for run/build/seed if not already requested.
     full_refresh = (_get_env_value("DBT_FULL_REFRESH") or "false").lower() in {
         "1",
         "true",
@@ -61,7 +67,6 @@ def main() -> None:
         target=target,
         threads=threads,
         vars_payload=vars_payload,
-        state_dir=Path(state_dir_raw) if state_dir_raw else None,
         full_refresh=full_refresh,
     )
 
