@@ -4,6 +4,7 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import Iterable
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
@@ -34,6 +35,11 @@ def _download_to_path(uri: str, destination: Path) -> None:
             raise SeedDownloadError(f"Failed to download {uri}: {exc}") from exc
 
 
+def _log_seed_files(seeds_dir: Path, files: Iterable[Path]) -> None:
+    paths = ", ".join(sorted(str(f.resolve()) for f in files)) or "<none>"
+    print(f"[tower-dbt] Seeds populated in {seeds_dir.resolve()}: {paths}")
+
+
 def populate_seeds_from_archive(uri: str, seeds_dir: Path) -> None:
     """
     Populate `seeds_dir` with CSV files extracted from the zipped archive at `uri`.
@@ -62,5 +68,10 @@ def populate_seeds_from_archive(uri: str, seeds_dir: Path) -> None:
         for existing in seeds_dir.glob("*.csv"):
             existing.unlink()
 
+        copied: list[Path] = []
         for src in csv_files:
-            shutil.copy2(src, seeds_dir / src.name)
+            dest = seeds_dir / src.name
+            shutil.copy2(src, dest)
+            copied.append(dest)
+
+        _log_seed_files(seeds_dir, copied)

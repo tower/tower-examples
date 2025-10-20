@@ -2,28 +2,28 @@
 name = "dbt-core-ecommerce-analytics"
 script = "./task.py"
 source = [
-  "./task.py",
-  "./seed.py",
-  "./_dbt.py",
+  "./*.py",
+  "./*.md",
   "./pyproject.toml",
-  "./README.md",
-  "./dbt-project/**"
+  "./dbt-project/olist_dbt/dbt_project.yml",
+  "./dbt-project/olist_dbt/packages.yml",
+  "./dbt-project/olist_dbt/profiles.example.yml",
+  "./dbt-project/olist_dbt/README.md",
+  "./dbt-project/olist_dbt/macros/**",
+  "./dbt-project/olist_dbt/models/**",
+  "./dbt-project/olist_dbt/snapshots/**",
+  "./dbt-project/olist_dbt/seeds/**",
 ]
 
 [[parameters]]
 name = "DBT_COMMANDS"
-description = "Comma-separated dbt commands to run (e.g. deps,seed,build)"
+description = "Comma-separated list of dbt commands to run (deps,seed,build, etc.)."
 default = "deps,seed,build"
 
 [[parameters]]
 name = "DBT_PROJECT_PATH"
 description = "Relative path to the dbt project to execute"
 default = "dbt-project/olist_dbt"
-
-[[parameters]]
-name = "DBT_SEED_ARCHIVE_URI"
-description = "Optional URI to a zip archive containing seed CSVs"
-default = ""
 
 [[parameters]]
 name = "DBT_TARGET"
@@ -39,8 +39,3 @@ default = ""
 name = "DBT_FULL_REFRESH"
 description = "Set to true to pass --full-refresh to run/build commands"
 default = "false"
-
-[[parameters]]
-name = "DBT_PROFILE_YAML"
-description = "Full contents of profiles.yml (store as a secret parameter)"
-default = ""

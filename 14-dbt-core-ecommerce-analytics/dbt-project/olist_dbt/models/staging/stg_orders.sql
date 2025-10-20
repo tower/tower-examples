@@ -1,6 +1,6 @@
 with src as (
     select * from {{ ref('olist_orders_dataset') }}
-    -- to read from loaded sources instead of seeds, swap to: select * from {{ source('raw', 'olist_orders_dataset') }}
+    -- to read from loaded sources instead of seeds, swap to: select * from source('raw', 'olist_orders_dataset')
 )
 select
     order_id,

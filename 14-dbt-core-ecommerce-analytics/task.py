@@ -46,6 +46,7 @@ def main() -> None:
     project_path = Path(_get_env_value("DBT_PROJECT_PATH") or "dbt-project/olist_dbt")
     seed_archive_uri = _get_env_value(DATASET_ARCHIVE_ENV)
     if seed_archive_uri:
+        print("Using seed archive at {}".format(seed_archive_uri))
         # Pull zipped seeds (e.g., from S3) so dbt seed can run without committing CSVs.
         populate_seeds_from_archive(seed_archive_uri, project_path / "seeds")
     # Command plan, e.g. "deps, seed --full-refresh, build --select state:modified+".
