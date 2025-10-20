@@ -3,6 +3,7 @@ name = "dbt-core-ecommerce-analytics"
 script = "./task.py"
 source = [
   "./task.py",
+  "./seed.py",
   "./_dbt.py",
   "./pyproject.toml",
   "./README.md",
@@ -18,6 +19,11 @@ default = "deps,seed,build"
 name = "DBT_PROJECT_PATH"
 description = "Relative path to the dbt project to execute"
 default = "dbt-project/olist_dbt"
+
+[[parameters]]
+name = "DBT_SEED_ARCHIVE_URI"
+description = "Optional URI to a zip archive containing seed CSVs"
+default = ""
 
 [[parameters]]
 name = "DBT_TARGET"

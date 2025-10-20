@@ -12,6 +12,7 @@ This Tower example app shows how to run a dbt Core project with the Python API i
 | ---- | ----------- | ------- |
 | `DBT_COMMANDS` | Comma-separated list of dbt commands to run (`deps,seed,build`, etc.). Flags can follow each command (e.g. `build --select tag:daily`). | `deps,seed,build` |
 | `DBT_PROJECT_PATH` | Relative path to the dbt project directory | `dbt-project/olist_dbt` |
+| `DBT_SEED_ARCHIVE_URI` | Optional URI (e.g. `s3://bucket/path.zip`) that will be downloaded and extracted into `seeds/` before running | _empty_ |
 | `DBT_TARGET` | Target name from the profile (empty = profile default) | _empty_ |
 | `DBT_SELECT` | Optional `--select` selector | _empty_ |
 | `DBT_FULL_REFRESH` | `true` to add `--full-refresh` to `run`/`build`/`seed` (unless already provided in `DBT_COMMANDS`) | `false` |
@@ -20,6 +21,8 @@ This Tower example app shows how to run a dbt Core project with the Python API i
 > ℹ️ Store `DBT_PROFILE_YAML` as a Tower secret so credentials never hit version control. You can still use `env_var()` inside the YAML to defer sensitive values to other secrets.
 
 Advanced flags such as `DBT_THREADS` or `DBT_VARS_JSON` remain supported—set them with `tower run -p VAR=value` or extend the Towerfile for custom workflows.
+
+If you store your seeds in S3, set `DBT_SEED_ARCHIVE_URI` (for example `s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip`) and the app will pull and unpack the archive before `dbt seed` runs.
 
 ## Local setup
 1. Ensure Python 3.11+ is available.
@@ -32,7 +35,12 @@ Advanced flags such as `DBT_THREADS` or `DBT_VARS_JSON` remain supported—set t
    ```bash
    export DBT_PROFILE_YAML="$(cat dbt-project/olist_dbt/profiles.example.yml)"
    ```
-4. Run the app:
+4. (Optional) Download the seed archive locally if you do not set `DBT_SEED_ARCHIVE_URI`:
+   ```bash
+   aws s3 cp s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip /tmp/olist-seeds.zip
+   unzip -o /tmp/olist-seeds.zip -d dbt-project/olist_dbt/seeds
+   ```
+5. Run the app:
    ```bash
    uv run python task.py
    ```

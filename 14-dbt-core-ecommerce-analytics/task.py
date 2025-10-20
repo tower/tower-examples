@@ -10,6 +10,9 @@ from _dbt import (
     parse_command_plan,
     run_dbt_workflow,
 )
+from seed import populate_seeds_from_archive
+
+DATASET_ARCHIVE_ENV = "DBT_SEED_ARCHIVE_URI"
 
 
 def _get_env_value(name: str) -> str | None:
@@ -41,6 +44,10 @@ def main() -> None:
 
     # Absolute path to the dbt project directory (contains dbt_project.yml).
     project_path = Path(_get_env_value("DBT_PROJECT_PATH") or "dbt-project/olist_dbt")
+    seed_archive_uri = _get_env_value(DATASET_ARCHIVE_ENV)
+    if seed_archive_uri:
+        # Pull zipped seeds (e.g., from S3) so dbt seed can run without committing CSVs.
+        populate_seeds_from_archive(seed_archive_uri, project_path / "seeds")
     # Command plan, e.g. "deps, seed --full-refresh, build --select state:modified+".
     commands = parse_command_plan(_get_env_value("DBT_COMMANDS"))
     # Optional selector applied to commands that don't already pass --select.
