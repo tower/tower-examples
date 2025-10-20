@@ -3,6 +3,7 @@ name = "dbt-core-ecommerce-analytics"
 script = "./task.py"
 source = [
   "./task.py",
+  "./_dbt.py",
   "./pyproject.toml",
   "./README.md",
   "./dbt-project/**"
@@ -29,24 +30,9 @@ description = "Optional dbt selector passed via --select"
 default = ""
 
 [[parameters]]
-name = "DBT_THREADS"
-description = "Number of threads for dbt execution"
-default = ""
-
-[[parameters]]
 name = "DBT_FULL_REFRESH"
 description = "Set to true to pass --full-refresh to run/build commands"
 default = "false"
-
-[[parameters]]
-name = "DBT_STATE_DIR"
-description = "Optional path to a previous dbt state directory"
-default = ""
-
-[[parameters]]
-name = "DBT_VARS_JSON"
-description = "Optional JSON string passed to --vars"
-default = ""
 
 [[parameters]]
 name = "DBT_PROFILE_YAML"
