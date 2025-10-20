@@ -2,7 +2,7 @@ name: 'olist_dbt'
 version: '1.0.0'
 config-version: 2
 require-dbt-version:
-  - '>=1.10.0'
+  - '>=1.9.0'
   - '<2.0.0'
 
 profile: 'olist'
@@ -28,13 +28,15 @@ models:
 seeds:
   olist_dbt:
     +quote_columns: false
-    +column_types:
-      olist_order_items_dataset:
+    olist_order_items_dataset:
+      +column_types:
         price: numeric
         freight_value: numeric
-      olist_order_payments_dataset:
+    olist_order_payments_dataset:
+      +column_types:
         payment_value: numeric
-      olist_orders_dataset:
+    olist_orders_dataset:
+      +column_types:
         order_purchase_timestamp: timestamp
         order_approved_at: timestamp
         order_delivered_carrier_date: timestamp

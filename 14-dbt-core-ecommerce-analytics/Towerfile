@@ -1,0 +1,54 @@
+[app]
+name = "dbt-core-ecommerce-analytics"
+script = "./task.py"
+source = [
+  "./task.py",
+  "./pyproject.toml",
+  "./README.md",
+  "./dbt-project/**"
+]
+
+[[parameters]]
+name = "DBT_COMMANDS"
+description = "Comma-separated dbt commands to run (e.g. deps,seed,build)"
+default = "deps,seed,build"
+
+[[parameters]]
+name = "DBT_PROJECT_PATH"
+description = "Relative path to the dbt project to execute"
+default = "dbt-project/olist_dbt"
+
+[[parameters]]
+name = "DBT_TARGET"
+description = "dbt target name to use from the profile"
+default = ""
+
+[[parameters]]
+name = "DBT_SELECT"
+description = "Optional dbt selector passed via --select"
+default = ""
+
+[[parameters]]
+name = "DBT_THREADS"
+description = "Number of threads for dbt execution"
+default = ""
+
+[[parameters]]
+name = "DBT_FULL_REFRESH"
+description = "Set to true to pass --full-refresh to run/build commands"
+default = "false"
+
+[[parameters]]
+name = "DBT_STATE_DIR"
+description = "Optional path to a previous dbt state directory"
+default = ""
+
+[[parameters]]
+name = "DBT_VARS_JSON"
+description = "Optional JSON string passed to --vars"
+default = ""
+
+[[parameters]]
+name = "DBT_PROFILE_YAML"
+description = "Full contents of profiles.yml (store as a secret parameter)"
+default = ""
