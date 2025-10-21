@@ -13,6 +13,7 @@ from _dbt import (
 from seed import populate_seeds_from_archive
 
 DATASET_ARCHIVE_ENV = "DBT_SEED_ARCHIVE_URI"
+DEFAULT_SEED_ARCHIVE = "s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip"
 
 
 def _get_env_value(name: str) -> str | None:
@@ -44,11 +45,17 @@ def main() -> None:
 
     # Absolute path to the dbt project directory (contains dbt_project.yml).
     project_path = Path(_get_env_value("DBT_PROJECT_PATH") or "dbt-project/olist_dbt")
+    seeds_dir = project_path / "seeds"
+    existing_seeds = list(seeds_dir.glob("*.csv")) if seeds_dir.exists() else []
     seed_archive_uri = _get_env_value(DATASET_ARCHIVE_ENV)
     if seed_archive_uri:
         print("Using seed archive at {}".format(seed_archive_uri))
-        # Pull zipped seeds (e.g., from S3) so dbt seed can run without committing CSVs.
-        populate_seeds_from_archive(seed_archive_uri, project_path / "seeds")
+        populate_seeds_from_archive(seed_archive_uri, seeds_dir)
+    elif not existing_seeds:
+        print("Using default seed archive at {}".format(DEFAULT_SEED_ARCHIVE))
+        populate_seeds_from_archive(DEFAULT_SEED_ARCHIVE, seeds_dir)
+    else:
+        print("Seed CSVs already present in {} – skipping download.".format(seeds_dir.resolve()))
     # Command plan, e.g. "deps, seed --full-refresh, build --select state:modified+".
     commands = parse_command_plan(_get_env_value("DBT_COMMANDS"))
     # Optional selector applied to commands that don't already pass --select.

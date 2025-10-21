@@ -1,64 +1,86 @@
 # Tower dbt Core Ecommerce Analytics App
 
-This Tower example app shows how to run a dbt Core project with the Python API instead of shell commands. It executes the `olist_dbt` project included in this repo, but you can point it at any dbt project that is available in the workspace.
+This example shows how to run a dbt Core project from a Tower app. It packages the `olist_dbt` project, remote seed hydration helpers (defaulting to Tower’s S3 archive), and a lightweight wrapper around `dbtRunner` so you can repurpose the workflow for your own dbt repository.
 
-## What the app does
-- Writes a `profiles.yml` file from the `DBT_PROFILE_YAML` secret.
-- Invokes dbt commands (`deps`, `seed`, `build` by default) via `dbtRunner`.
-- Streams run statuses to the Tower logs.
+## How it works
+- Seeds are hydrated from a zip archive before `dbt seed`. Tower’s environment defaults to `s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip` when no CSVs are present; override this by setting `DBT_SEED_ARCHIVE_URI`. If the `seeds/` folder already contains CSVs (e.g., you unzipped the [Kaggle Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerc)), the app skips the download.
+- A runtime `profiles.yml` is written from the `DBT_PROFILE_YAML` secret.
+- dbt commands (defaults: `deps`, `seed`, `build`) are executed via `dbtRunner` and the results are streamed to Tower logs.
 
-## Parameters & Secrets
+## Parameters
 | Name | Description | Default |
 | ---- | ----------- | ------- |
-| `DBT_COMMANDS` | Comma-separated list of dbt commands to run (`deps,seed,build`, etc.). Flags can follow each command (e.g. `build --select tag:daily`). | `deps,seed,build` |
-| `DBT_PROJECT_PATH` | Relative path to the dbt project directory | `dbt-project/olist_dbt` |
-| `DBT_SEED_ARCHIVE_URI` | Optional URI (e.g. `s3://bucket/path.zip`) that will be downloaded and extracted into `seeds/` before running | _empty_ |
-| `DBT_TARGET` | Target name from the profile (empty = profile default) | _empty_ |
-| `DBT_SELECT` | Optional `--select` selector | _empty_ |
-| `DBT_FULL_REFRESH` | `true` to add `--full-refresh` to `run`/`build`/`seed` (unless already provided in `DBT_COMMANDS`) | `false` |
-| `DBT_PROFILE_YAML` | **Secret.** Entire contents of `profiles.yml` | _(required)_ |
+| `DBT_COMMANDS` | Comma-separated dbt commands (flags allowed, e.g. `build --select tag:daily`). | `deps,seed,build` |
+| `DBT_PROJECT_PATH` | Relative path to the dbt project root. | `dbt-project/olist_dbt` |
+| `DBT_TARGET` | Target name from the profile (blank uses the profile default). | _empty_ |
+| `DBT_SELECT` | Extra `--select` applied when commands don’t already include one. | _empty_ |
+| `DBT_FULL_REFRESH` | `true` adds `--full-refresh` to run/build/seed (unless already provided). | `false` |
 
-> ℹ️ Store `DBT_PROFILE_YAML` as a Tower secret so credentials never hit version control. You can still use `env_var()` inside the YAML to defer sensitive values to other secrets.
+Advanced options like `DBT_THREADS` or `DBT_VARS_JSON` remain supported—set them with `tower run -p VAR=value` or bake them into your Towerfile.
 
-Advanced flags such as `DBT_THREADS` or `DBT_VARS_JSON` remain supported—set them with `tower run -p VAR=value` or extend the Towerfile for custom workflows.
+### Required secret
+- `DBT_PROFILE_YAML`: provide the full `profiles.yml` contents via `tower secrets set` so the app can render it at runtime.
 
-If you store your seeds in S3, set `DBT_SEED_ARCHIVE_URI` (for example `s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip`) and the app will pull and unpack the archive before `dbt seed` runs.
-
-## Local setup
+## Local workflow
 1. Ensure Python 3.11+ is available.
 2. Install dependencies:
    ```bash
    uv venv
    uv sync
    ```
-3. Create a profile secret for local testing:
+3. Export a profile for local testing:
    ```bash
    export DBT_PROFILE_YAML="$(cat dbt-project/olist_dbt/profiles.example.yml)"
    ```
-4. (Optional) Download the seed archive locally if you do not set `DBT_SEED_ARCHIVE_URI`:
+4. Optional: hydrate seeds locally (e.g., unzip the Kaggle dataset into `dbt-project/olist_dbt/seeds`) or point the app at your own archive (if unset and no CSVs exist, the default S3 archive is used automatically):
    ```bash
-   aws s3 cp s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip /tmp/olist-seeds.zip
-   unzip -o /tmp/olist-seeds.zip -d dbt-project/olist_dbt/seeds
+   export DBT_SEED_ARCHIVE_URI="s3://my-bucket/path/to/seeds.zip"
    ```
 5. Run the app:
    ```bash
    uv run python task.py
    ```
 
-When run inside Tower, the app will execute the same workflow against your configured profile and dbt project. Adjust `DBT_COMMANDS` or `DBT_SELECT` to tailor the run to your needs (e.g., `DBT_COMMANDS=build` and `DBT_SELECT=tag:mart`).
+## Deploying to Tower
+1. From this directory, deploy (creates the app if needed):
+   ```bash
+   tower deploy
+   ```
+2. Set the required secret:
+   ```bash
+   tower secrets create --name DBT_PROFILE_YAML --value "$(cat dbt-project/olist_dbt/profiles.example.yml)"
+   ```
+3. If Tower should pull seeds from a different location, set `DBT_SEED_ARCHIVE_URI` as a secret:
+   ```bash
+   tower secrets create --name DBT_SEED_ARCHIVE_URI --value "s3://my-bucket/path/to/seeds.zip"
+   ```
+
+## Running the Tower app
+- Local run (executes with your workstation’s Python/dbt):
+  ```bash
+  tower run --local
+  ```
+- Cloud run (executes on Tower infrastructure):
+  ```bash
+  tower run
+  ```
+
+Monitor progress with:
+```bash
+tower apps show dbt-core-ecommerce-analytics
+```
 
 ## Programmatic helper
-The `_dbt.py` module wraps `dbtRunner` with a higher-level interface:
+The `_dbt.py` module exposes the same workflow for reuse:
 
 ```python
-from _dbt import DbtRunnerConfig, run_dbt_workflow, load_profile_from_env
+from _dbt import DbtRunnerConfig, load_profile_from_env, run_dbt_workflow
 
 config = DbtRunnerConfig(
     project_path="path/to/dbt_project",
     profile_payload=load_profile_from_env(),
-    # commands default to: deps -> seed -> build
 )
 run_dbt_workflow(config)
 ```
 
-Override the defaults by editing the command plan (`parse_command_plan("deps,build --select tag:daily")`), enabling full refreshes, or passing vars/state directories through the config.
+Adjust the command plan (`parse_command_plan("deps,build --select tag:mart")`), enable full refreshes, or pass additional vars/threads as needed.
