@@ -4,12 +4,7 @@ import json
 import os
 from pathlib import Path
 
-from _dbt import (
-    DbtRunnerConfig,
-    load_profile_from_env,
-    parse_command_plan,
-    run_dbt_workflow,
-)
+from _dbt import dbt, load_profile_from_env, parse_command_plan
 from seed import populate_seeds_from_archive
 
 DATASET_ARCHIVE_ENV = "DBT_SEED_ARCHIVE_URI"
@@ -41,8 +36,6 @@ def _parse_vars(value: str | None):
 
 
 def main() -> None:
-    profile_payload = load_profile_from_env()
-
     # Absolute path to the dbt project directory (contains dbt_project.yml).
     project_path = Path(_get_env_value("DBT_PROJECT_PATH") or "dbt-project/olist_dbt")
     seeds_dir = project_path / "seeds"
@@ -56,36 +49,19 @@ def main() -> None:
         populate_seeds_from_archive(DEFAULT_SEED_ARCHIVE, seeds_dir)
     else:
         print("Seed CSVs already present in {} – skipping download.".format(seeds_dir.resolve()))
-    # Command plan, e.g. "deps, seed --full-refresh, build --select state:modified+".
-    commands = parse_command_plan(_get_env_value("DBT_COMMANDS"))
-    # Optional selector applied to commands that don't already pass --select.
-    selector = _get_env_value("DBT_SELECT")
-    # Override target name from the profile; blank uses the profile default.
-    target = _get_env_value("DBT_TARGET")
-    # Optional thread count; falls back to profile value when unset.
-    threads = _parse_threads(_get_env_value("DBT_THREADS"))
-    # Optional vars payload (JSON/YAML) passed to dbt.
-    vars_payload = _parse_vars(_get_env_value("DBT_VARS_JSON"))
 
-    # Toggle --full-refresh for run/build/seed if not already requested.
-    full_refresh = (_get_env_value("DBT_FULL_REFRESH") or "false").lower() in {
-        "1",
-        "true",
-        "yes",
-    }
-
-    config = DbtRunnerConfig(
+    workflow = dbt(
         project_path=project_path,
-        profile_payload=profile_payload,
-        commands=commands,
-        selector=selector,
-        target=target,
-        threads=threads,
-        vars_payload=vars_payload,
-        full_refresh=full_refresh,
+        profile_payload=load_profile_from_env(),
+        commands=parse_command_plan(_get_env_value("DBT_COMMANDS")),
+        selector=_get_env_value("DBT_SELECT"),
+        target=_get_env_value("DBT_TARGET"),
+        threads=_parse_threads(_get_env_value("DBT_THREADS")),
+        vars_payload=_parse_vars(_get_env_value("DBT_VARS_JSON")),
+        full_refresh=(_get_env_value("DBT_FULL_REFRESH") or "false").lower() in {"1", "true", "yes"},
     )
 
-    run_dbt_workflow(config)
+    workflow.run()
 
 
 if __name__ == "__main__":
