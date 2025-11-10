@@ -69,18 +69,3 @@ Monitor progress with:
 ```bash
 tower apps show dbt-core-ecommerce-analytics
 ```
-
-## Programmatic helper
-The `_dbt.py` module exposes the same workflow for reuse:
-
-```python
-from _dbt import DbtRunnerConfig, load_profile_from_env, run_dbt_workflow
-
-config = DbtRunnerConfig(
-    project_path="path/to/dbt_project",
-    profile_payload=load_profile_from_env(),
-)
-run_dbt_workflow(config)
-```
-
-Adjust the command plan (`parse_command_plan("deps,build --select tag:mart")`), enable full refreshes, or pass additional vars/threads as needed.

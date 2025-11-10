@@ -8,6 +8,7 @@ dependencies = [
     "dbt-core>=1.9,<1.10",
     "dbt-duckdb>=1.9,<1.10",
     "boto3>=1.34",
+    "tower>=0.3.33",
 ]
 
 [tool.uv]

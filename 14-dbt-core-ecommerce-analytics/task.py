@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
+import tower
 
-from _dbt import dbt, load_profile_from_env, parse_command_plan
+from pathlib import Path
 from seed import populate_seeds_from_archive
 
 DATASET_ARCHIVE_ENV = "DBT_SEED_ARCHIVE_URI"
@@ -50,10 +50,10 @@ def main() -> None:
     else:
         print("Seed CSVs already present in {} – skipping download.".format(seeds_dir.resolve()))
 
-    workflow = dbt(
+    workflow = tower.dbt(
         project_path=project_path,
-        profile_payload=load_profile_from_env(),
-        commands=parse_command_plan(_get_env_value("DBT_COMMANDS")),
+        profile_payload=tower.dbt.load_profile_from_env(),
+        commands=tower.dbt.parse_command_plan(_get_env_value("DBT_COMMANDS")),
         selector=_get_env_value("DBT_SELECT"),
         target=_get_env_value("DBT_TARGET"),
         threads=_parse_threads(_get_env_value("DBT_THREADS")),
