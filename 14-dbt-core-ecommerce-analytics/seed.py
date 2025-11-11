@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 from urllib.request import urlopen
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 
 
 class SeedDownloadError(RuntimeError):
@@ -22,7 +24,8 @@ def _download_to_path(uri: str, destination: Path) -> None:
         key = parsed.path.lstrip("/")
         if not bucket or not key:
             raise SeedDownloadError(f"Invalid S3 URI: {uri}")
-        client = boto3.client("s3")
+        # Use unsigned requests for public buckets
+        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         try:
             client.download_file(bucket, key, str(destination))
         except Exception as exc:  # pylint: disable=broad-except

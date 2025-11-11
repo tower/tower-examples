@@ -3,7 +3,7 @@
 This example shows how to run a dbt Core project from a Tower app. It packages the `olist_dbt` project, remote seed hydration helpers (defaulting to Tower’s S3 archive), and a lightweight wrapper around `dbtRunner` so you can repurpose the workflow for your own dbt repository.
 
 ## How it works
-- Seeds are hydrated from a zip archive before `dbt seed`. Tower’s environment defaults to `s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip` when no CSVs are present; override this by setting `DBT_SEED_ARCHIVE_URI`. If the `seeds/` folder already contains CSVs (e.g., you unzipped the [Kaggle Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerc)), the app skips the download.
+- Seeds are hydrated from a zip archive before `dbt seed`. Tower’s environment defaults to `s3://tower-sandbox/olist_ecommerce_dataset/olist-seeds.zip` when no CSVs are present; override this by setting `DBT_SEED_ARCHIVE_URI`. If the `seeds/` folder already contains CSVs (e.g., you unzipped the [Kaggle Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerc)), the app skips the download.
 - A runtime `profiles.yml` is written from the `DBT_PROFILE_YAML` secret.
 - dbt commands (defaults: `deps`, `seed`, `build`) are executed via `dbtRunner` and the results are streamed to Tower logs.
 

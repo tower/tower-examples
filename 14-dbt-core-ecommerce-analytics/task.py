@@ -8,7 +8,7 @@ from pathlib import Path
 from seed import populate_seeds_from_archive
 
 DATASET_ARCHIVE_ENV = "DBT_SEED_ARCHIVE_URI"
-DEFAULT_SEED_ARCHIVE = "s3://tower-demo-lakehouse-001/olist_ecommerce_dataset/olist-seeds.zip"
+DEFAULT_SEED_ARCHIVE = "s3://tower-sandbox/olist_ecommerce_dataset/olist-seeds.zip"
 
 
 def _get_env_value(name: str) -> str | None:
