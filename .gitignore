@@ -34,6 +34,9 @@ secrets.yml
 #output files
 out
 
+#ignore files
+ignore
+
 #
 # Ignore for 04-dlthub-data-pond
 #

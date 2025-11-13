@@ -4,12 +4,27 @@ import os
 import json
 
 
-from langchain.tools import Tool
+from tower._context import TowerContext
+
+from langchain_core.tools import Tool
 from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from langchain.agents import create_react_agent, AgentExecutor
 from langsmith import Client as LangSmithClient  # For default prompts
 
 
+
+def get_llm():
+
+    model_to_use = os.getenv("MODEL_TO_USE")
+    temperature = 0
+
+    ctx = TowerContext.build()
+
+    if ctx.is_local():
+        return ChatOllama(model=model_to_use, temperature=temperature)
+    else:
+        return ChatOpenAI(model=model_to_use, temperature=temperature)
 
 # Function to fetch ticker data
 def get_data_for_ticker(input_str: str) -> str:
@@ -78,11 +93,24 @@ If the data is not available, tool returns a message saying so.
 
 def main():
     """
-    Create an agent that will maintain the ticker data for the given list of tickers
+    Create and execute an agent that maintains ticker data for a given list of tickers.
+    
+    The agent uses LangChain tools to:
+    1. Check if ticker data already exists for a specific date
+    2. Fetch and store ticker data if it doesn't exist
+    
+    Environment Variables:
+        MODEL_TO_USE: The LLM model to use (e.g., "gpt-4o-mini", "llama3.1")
+        USER_INPUT: Custom instructions for the agent (optional)
+        TICKERS: Comma-separated list of ticker symbols
+        PULL_DATE: Date in YYYY-MM-DD format for data retrieval
+        
+    The agent processes tickers one by one, checking availability before fetching
+    to avoid duplicate data retrieval.
     """
 
     tools = [get_data_for_ticker_tool, check_ticker_data_available_tool]
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    llm = get_llm()
     
     lsclient = LangSmithClient()
     prompt = lsclient.pull_prompt("hwchase17/react")

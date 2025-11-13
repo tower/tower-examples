@@ -52,6 +52,7 @@ will figure out what app to run based on the Towerfile.
 To run locally
 
 ```bash
+uv sync
 tower run --local
 ```
 
