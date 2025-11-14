@@ -1,0 +1,59 @@
+version: 2
+models:
+  - name: dim_customers
+    description: One row per customer_id enriched with geolocation.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+  - name: dim_sellers
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+  - name: dim_products
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+  - name: dim_geography
+    columns:
+      - name: zip_prefix
+        tests: [not_null]
+  - name: fact_order_items
+    description: Order-item grain fact table with revenue and delivery KPIs.
+    columns:
+      - name: order_id
+        data_type: string
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: order_item_id
+        data_type: int
+        tests: [not_null]
+      - name: product_id
+        data_type: string
+      - name: seller_id
+        data_type: string
+      - name: customer_id
+        data_type: string
+      - name: order_purchase_ts
+        data_type: timestamp
+      - name: price
+        data_type: numeric
+      - name: freight_value
+        data_type: numeric
+      - name: item_revenue
+        data_type: numeric
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: total_payment_value
+        data_type: decimal(38, 3)
+      - name: max_installments
+        data_type: int
+      - name: primary_payment_type
+        data_type: string
+      - name: days_to_delivery
+        data_type: bigint
+      - name: days_late
+        data_type: bigint

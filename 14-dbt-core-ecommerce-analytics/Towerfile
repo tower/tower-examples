@@ -1,0 +1,41 @@
+[app]
+name = "dbt-core-ecommerce-analytics"
+script = "./task.py"
+source = [
+  "./*.py",
+  "./*.md",
+  "./pyproject.toml",
+  "./dbt-project/olist_dbt/dbt_project.yml",
+  "./dbt-project/olist_dbt/packages.yml",
+  "./dbt-project/olist_dbt/profiles.example.yml",
+  "./dbt-project/olist_dbt/README.md",
+  "./dbt-project/olist_dbt/macros/**",
+  "./dbt-project/olist_dbt/models/**",
+  "./dbt-project/olist_dbt/snapshots/**",
+  "./dbt-project/olist_dbt/seeds/**",
+]
+
+[[parameters]]
+name = "DBT_COMMANDS"
+description = "Comma-separated list of dbt commands to run (deps,seed,build, etc.)."
+default = "deps,seed,build"
+
+[[parameters]]
+name = "DBT_PROJECT_PATH"
+description = "Relative path to the dbt project to execute"
+default = "dbt-project/olist_dbt"
+
+[[parameters]]
+name = "DBT_TARGET"
+description = "dbt target name to use from the profile"
+default = ""
+
+[[parameters]]
+name = "DBT_SELECT"
+description = "Optional dbt selector passed via --select"
+default = ""
+
+[[parameters]]
+name = "DBT_FULL_REFRESH"
+description = "Set to true to pass --full-refresh to run/build commands"
+default = "false"
