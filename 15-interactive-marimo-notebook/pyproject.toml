@@ -1,7 +1,7 @@
 [project]
-name = "marimo-notebook"
-version = "0.1.0"
-description = "Add your description here"
+name = "interactive-marimo-notebook"
+version = "1.0.0"
+description = "Tower app that runs an intractive Marimo notebook."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

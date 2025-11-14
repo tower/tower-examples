@@ -15,7 +15,7 @@ app = FastAPI()
 app.mount("/", server.build())
 
 def main():
-    port = int(os.getenv("PORT", "50050"))
+    port = int(os.getenv("PORT", "50051"))
     hostname = os.getenv("TOWER__HOSTNAME", "(none)")
     print(f"Starting notebook for {hostname}")
 
