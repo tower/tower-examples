@@ -64,22 +64,22 @@ def main() -> None:
     # Parse dbt configuration from environment variables.
     # These can be overridden via Towerfile parameters.
 
-    # DBT_COMMANDS: Comma-separated list of dbt commands to run (e.g., "seed,run,test")
+    # DBT_COMMANDS (optional): Comma-separated list of dbt commands to run (e.g., "seed,run,test")
     commands = tower.dbt.parse_command_plan(_get_env_value("DBT_COMMANDS"))
 
-    # DBT_SELECT: dbt selector for filtering models/tests (e.g., "tag:daily" or "model_name+")
+    # DBT_SELECT (optional): dbt selector for filtering models/tests (e.g., "tag:daily" or "model_name+")
     selector = _get_env_value("DBT_SELECT")
 
-    # DBT_TARGET: Target profile to use from profiles.yml (e.g., "dev", "prod")
+    # DBT_TARGET (optional): Target profile to use from profiles.yml (e.g., "dev", "prod")
     target = _get_env_value("DBT_TARGET")
 
-    # DBT_THREADS: Number of threads for parallel execution
+    # DBT_THREADS (optional): Number of threads for parallel execution
     threads = _parse_threads(_get_env_value("DBT_THREADS"))
 
-    # DBT_VARS_JSON: JSON string of variables to pass to dbt (e.g., '{"key": "value"}')
+    # DBT_VARS_JSON (optional): JSON string of variables to pass to dbt (e.g., '{"key": "value"}')
     vars_payload = _parse_vars(_get_env_value("DBT_VARS_JSON"))
 
-    # DBT_FULL_REFRESH: Whether to do a full refresh of incremental models (true/false)
+    # DBT_FULL_REFRESH (optional): Whether to do a full refresh of incremental models (true/false)
     full_refresh = (_get_env_value("DBT_FULL_REFRESH") or "false").lower() in {"1", "true", "yes"}
 
     # Create and run the dbt workflow
