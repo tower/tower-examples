@@ -1,0 +1,15 @@
+[project]
+name = "dbt-core-ecommerce-analytics-app"
+version = "0.1.0"
+description = "Tower app that runs a dbt Core project through the Python API."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dbt-core>=1.9,<1.10",
+    "dbt-duckdb>=1.9,<1.10",
+    "boto3>=1.34",
+    "tower>=0.3.33",
+]
+
+[tool.uv]
+dev-dependencies = []
