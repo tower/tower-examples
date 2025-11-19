@@ -1,0 +1,9 @@
+source: LOCAL
+target: SNOWFLAKE_URL
+
+defaults:
+  mode: full-refresh
+
+streams:
+  "file://./data/input.json":
+    object: "PUBLIC.SLING_JSON_TOWER_DEMO"

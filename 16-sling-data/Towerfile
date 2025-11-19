@@ -1,0 +1,3 @@
+[app]
+name = "16-sling-data"
+script = "./main.py"
