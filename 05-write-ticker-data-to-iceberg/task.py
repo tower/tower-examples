@@ -85,7 +85,7 @@ def main():
         ("volume", pa.float64()),
     ])
 
-    table = tower.tables("daily_ticker_data_testing").create_if_not_exists(SCHEMA)
+    table = tower.tables("daily_ticker_data").create_if_not_exists(SCHEMA)
   
     ###
     # Step 3: Upsert new stats into the table. 
