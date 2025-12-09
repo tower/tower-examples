@@ -19,33 +19,32 @@ def get_ticker_data(tickers: str, pull_date_str: str) -> pa.Table:
     """
     # Convert date string to datetime
     pull_date = datetime.strptime(pull_date_str, "%Y-%m-%d")
-    next_day = pull_date + timedelta(days=1)
-    next_day_str = next_day.strftime("%Y-%m-%d")
+    end_date = datetime.now().strftime("%Y-%m-%d")
     
     # Download data for all tickers
     data = yf.download(
         tickers,
         start=pull_date_str,
-        end=next_day_str,
+        end=end_date,
         group_by='ticker'
     )
     
     # Initialize empty list to store rows
     rows = []
     ticker_list = [ticker.strip() for ticker in tickers.split(",")]
-    
-    # Process each ticker's data
+
     for ticker in ticker_list:
         if ticker in data.columns.levels[0]:
             ticker_data = data[ticker]
             if not ticker_data.empty:
-                rows.append({
-                    'ticker': ticker,
-                    'date': pull_date_str,
-                    'open': ticker_data['Open'].iloc[0],
-                    'close': ticker_data['Close'].iloc[0],
-                    'volume': ticker_data['Volume'].iloc[0]
-                })
+                for date, row in ticker_data.iterrows():
+                    rows.append({
+                        'ticker': ticker,
+                        'date': date.strftime("%Y-%m-%d"),
+                        'open': row['Open'],
+                        'close': row['Close'],
+                        'volume': row['Volume']
+                    })
     
     # Create Polars DataFrame
     return pa.Table.from_pylist(rows)
@@ -83,10 +82,10 @@ def main():
         ("date", pa.string()),
         ("open", pa.float64()),
         ("close", pa.float64()),
-        ("volume", pa.int64()),
+        ("volume", pa.float64()),
     ])
 
-    table = tower.tables("daily_ticker_data").create_if_not_exists(SCHEMA)
+    table = tower.tables("daily_ticker_data_testing").create_if_not_exists(SCHEMA)
   
     ###
     # Step 3: Upsert new stats into the table. 
