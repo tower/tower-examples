@@ -8,7 +8,12 @@ This app is supposed to be run on a schedule daily. The app is idempotent and ca
 
 # App Dependencies
 
-This app takes its data from the "daily_ticker_data" table, which is populated by the "write-ticker-data-to-iceberg" app. 
+This app takes its data from the "daily_ticker_data" table, which is populated by the "write-ticker-data-to-iceberg" app.
+
+## Sign Up for Hugging Face Hub
+
+1. [Sign up for Hugging Face](https://huggingface.co/join)
+2. Get your [access token](https://huggingface.co/docs/hub/en/security-tokens)
 
 # Deploying app to Tower cloud
 
@@ -29,6 +34,18 @@ If the app does not yet exist, Tower will suggest creating it.
 
 You need to tell us about your Iceberg catalog in the [Tower UI](https://app.tower.dev). 
 Use the catalog slug `default` as that's what this sample app expects it to be called.
+
+## Adding secrets
+
+Add your inference provider and its token as Tower secrets using following commands:
+
+```bash
+tower secrets create --environment="default" \
+  --name=TOWER_INFERENCE_ROUTER --value="hugging_face_hub"
+
+tower secrets create --environment="prod" \
+  --name=TOWER_INFERENCE_ROUTER_API_KEY --value="[YOUR_HF_TOKEN_HERE]"
+```
 
 ## Running the app
 
