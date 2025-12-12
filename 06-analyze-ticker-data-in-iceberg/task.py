@@ -142,7 +142,7 @@ Which of them would you recommend buying, holding, or selling? {summaries}"
     """
 
     # Ship the results off to the LLM for analysis.
-    result = tower.llms("deepseek-ai/DeepSeek-R1").prompt(prompt)
+    result = tower.llms("deepseek-r1").prompt(prompt)
 
     print(result)
 
