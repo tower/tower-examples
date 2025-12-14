@@ -10,8 +10,8 @@ source = [
 
 [[parameters]]
 name = "USER_INPUT"
-description = "The user input to use for the agent"
-default = ""
+description = "The user query to the agent"
+default = "What was the stock price for each given ticker on a particular day?"
 
 [[parameters]]
 name = "TICKERS"
@@ -22,6 +22,11 @@ default = "NVDA"
 name = "PULL_DATE"
 description = "The date of stock data to pull. If no date is entered, the app will take yesterday's date."
 default = "2025-06-17"
+
+[[parameters]]
+name = "INFERENCE_SERVER_BASE_URL"
+description = "The base URL of the inference server (leave empty to use default OpenAI API or set to e.g. \"http://127.0.0.1:8080/v1\")"
+default = ""
 
 [[parameters]]
 name = "MODEL_TO_USE"

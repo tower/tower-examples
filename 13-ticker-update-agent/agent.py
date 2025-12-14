@@ -1,135 +1,141 @@
 import tower
 import polars as pl
 import os
-import json
 
 
-from tower._context import TowerContext
-
-from langchain_core.tools import Tool
+from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
-from langchain_ollama import ChatOllama
-from langchain.agents import create_react_agent, AgentExecutor
-from langsmith import Client as LangSmithClient  # For default prompts
+
+from langchain.agents import create_openai_tools_agent, AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 
 
 def get_llm():
 
     model_to_use = os.getenv("MODEL_TO_USE")
-    temperature = 0
+    inference_server_base_url = os.getenv("INFERENCE_SERVER_BASE_URL")
+    temperature = 0.0 # to avoid randomness in reasoning
 
-    ctx = TowerContext.build()
-
-    if ctx.is_local():
-        return ChatOllama(model=model_to_use, temperature=temperature)
+    if inference_server_base_url:
+        return ChatOpenAI(model=model_to_use, temperature=temperature, base_url=inference_server_base_url)
     else:
         return ChatOpenAI(model=model_to_use, temperature=temperature)
 
-# Function to fetch ticker data
-def get_data_for_ticker(input_str: str) -> str:
 
-    params = json.loads(input_str)
-
-    app_params = {
-        "PULL_DATE": f"{params['PULL_DATE']}",
-        "TICKERS": f"{params['TICKER']}"
-    }
-
-    print(f"Calling data write app with parameters: {app_params}")
-    run = tower.run_app("write-ticker-data-to-iceberg", parameters=app_params)
-    run = tower.wait_for_run(run)
-
-    if run.status_group == "successful":
-        return f"Data for ticker {params['TICKER']} on date {params['PULL_DATE']} has been downloaded and upserted into the table.\n\n" 
-    else:
-        return f"Data for ticker {params['TICKER']} on date {params['PULL_DATE']} has not been downloaded and upserted into the table.\n\n"
-
-
-
-# Define LangChain Tool
-get_data_for_ticker_tool = Tool(
-    name="get_data_for_ticker",
-    func=get_data_for_ticker,
-    description="""Retrieves the data for given ticker. 
-Input must be a JSON string with PULL_DATE and TICKER keys.
-Example input: {"PULL_DATE": "2025-05-25", "TICKER": "AAPL"}"""
-)
-
-
-
-# Function to check if the data for the given ticker and pull date is already available
-def check_ticker_data_available(input_str: str) -> str:
-
-    params = json.loads(input_str)
-
+def get_ticker_price(TICKER: str, PULL_DATE: str):
+    """
+    Gets the price for a given ticker and pull date from the database.
+    Returns the price value if matching rows are found, None otherwise.
+    """
     table = tower.tables("daily_ticker_data").load()
-
     df = table.to_polars()
 
     # Filter for matching ticker and date
     matching_rows = df.filter(
-        (pl.col("ticker") == params["TICKER"]) & 
-        (pl.col("date") == params["PULL_DATE"])
+        (pl.col("ticker") == TICKER) & (pl.col("date") == PULL_DATE)
     ).collect()
 
-    if matching_rows.height > 0:
-        return f"Data already exists for ticker {params['TICKER']} on date {params['PULL_DATE']}\n\n"
+    if matching_rows.height > 0 and "close" in matching_rows.columns:
+        return matching_rows["close"][0]
     else:
-        return f"No data found for ticker {params['TICKER']} on date {params['PULL_DATE']}\n\n"
+        return None
 
 
-# Define LangChain Tool
-check_ticker_data_available_tool = Tool(
-    name="check_ticker_data_available",
-    func=check_ticker_data_available,
-    description="""Checks if the data for given ticker and pull date is already available.
-Input must be a JSON string with PULL_DATE and TICKER keys.
-Example input: {"PULL_DATE": "2025-05-25", "TICKER": "AAPL"}.
-If the data is available, tool returns a message saying so.
-If the data is not available, tool returns a message saying so.
-"""
-)
+# Function to check if the data for the given ticker and pull date is already available
+@tool 
+def check_if_ticker_data_is_already_available(PULL_DATE: str, TICKER: str) -> str:
+    """
+    Checks if data for ticker + pull date combination is already available in the database.
+    Returns a message that indicates if the data is already available in the database.
+    """
+
+    print(f"Checking if data is available for ticker {TICKER} on date {PULL_DATE}")
+
+    price = get_ticker_price(TICKER, PULL_DATE)
+    available = price is not None
+
+    if available:
+        retmsg = f"Data for {TICKER} is ALREADY AVAILABLE. Price of {TICKER} on {PULL_DATE} is {price}. Processing for {TICKER} is COMPLETE. Move to next."
+    else:
+        retmsg = f"Data for {TICKER} is MISSING."
+    
+    return retmsg
+
+
+# Function to fetch and store ticker data
+@tool
+def fetch_and_store_data_for_ticker_into_database(PULL_DATE: str, TICKER: str) -> str:
+    """
+    Fetches the ticker price from an External API and inserts data for a given ticker + pull date into the database. 
+    Returns a message that indicates if the data was fetched and stored into the database.
+    """
+
+    print(f"Fetching and storing data for ticker {TICKER} on date {PULL_DATE}")
+    
+    app_params = {
+        "PULL_DATE": str(PULL_DATE),
+        "TICKERS": str(TICKER),
+    }
+
+    run = tower.run_app("write-ticker-data-to-iceberg", parameters=app_params)
+    run = tower.wait_for_run(run)
+
+    fetched = run.status_group == "successful"
+
+    if fetched:
+        price = get_ticker_price(TICKER, PULL_DATE)
+        retmsg = f"Data for {TICKER} has been FETCHED. Price of {TICKER} on {PULL_DATE} is {price}. Processing for {TICKER} is COMPLETE. Move to next."
+    else:
+        retmsg = f"Data for {TICKER} has NOT been FETCHED. Processing for {TICKER} is INCOMPLETE. Move to next."
+
+    return retmsg
 
 def main():
-    """
-    Create and execute an agent that maintains ticker data for a given list of tickers.
-    
-    The agent uses LangChain tools to:
-    1. Check if ticker data already exists for a specific date
-    2. Fetch and store ticker data if it doesn't exist
-    
-    Environment Variables:
-        MODEL_TO_USE: The LLM model to use (e.g., "gpt-4o-mini", "llama3.1")
-        USER_INPUT: Custom instructions for the agent (optional)
-        TICKERS: Comma-separated list of ticker symbols
-        PULL_DATE: Date in YYYY-MM-DD format for data retrieval
-        
-    The agent processes tickers one by one, checking availability before fetching
-    to avoid duplicate data retrieval.
-    """
 
-    tools = [get_data_for_ticker_tool, check_ticker_data_available_tool]
+    tools = [fetch_and_store_data_for_ticker_into_database, check_if_ticker_data_is_already_available]
     llm = get_llm()
     
-    lsclient = LangSmithClient()
-    prompt = lsclient.pull_prompt("hwchase17/react")
+    business_rules = """
+        Goal: Return ticker price for every ticker in a given list while minimizing the number of external API calls.
 
-    agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
-    executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+        Instructions:
+        1. You can get stock ticker price either from a database or fetch it from an external source.
+        2. Getting from the database is preferred because it saves time.
+        3. When you fetch from an external source, you also save it in the database and can use the result later.
+        4. When you receive a list of tickers, determine the stock price one ticker after another.
+        5. Once you have checked (and optionally fetched) EVERY ticker in the list, you MUST respond with "All tickers processed".
+        6. Once you are done, you MUST respond with a summary of the prices of all the tickers.
+        """
+
+    system_prompt = """
+        You are an agent that returns the stock ticker price for a given list of tickers on a given date. 
+        Use the tools provided to you to return the ticker price.
+        """ + business_rules
+
+
+    # Use OpenAI tools agent prompt (works with function-calling models)
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        MessagesPlaceholder(variable_name="chat_history", optional=True),
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
+    ])
+
+    agent = create_openai_tools_agent(llm=llm, tools=tools, prompt=prompt)
+    executor = AgentExecutor(
+        agent=agent, tools=tools, verbose=True,
+        max_iterations=10,
+        early_stopping_method="force",
+        return_intermediate_steps=False,
+        handle_parsing_errors=True)
 
     # Build the user prompt and action input
     user_input = os.getenv("USER_INPUT")
-    if not user_input:
-        user_input = """
-        Get the ticker data for the given pull date and the given list of tickers. 
-        Get the ticker data one by one. 
-        Before getting the data for each ticker, check if it is already available.
-        """
+    user_input = user_input + "\n\n" + business_rules
 
     tickers, pull_date = os.getenv("TICKERS"), os.getenv("PULL_DATE")
-    input_params = {"PULL_DATE": pull_date, "TICKERS": tickers}
-    full_input = f"{user_input}\n\nAction Input: {json.dumps(input_params)}"
+    full_input = f"{user_input}\n\nTickers: {tickers}\nPull Date: {pull_date}"
  
     # Invoke the agent
     response = executor.invoke({"input": full_input})
