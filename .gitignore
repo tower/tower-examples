@@ -31,9 +31,10 @@ secrets.yml
 **/*_local.py
 */_local.py
 
+#local backups
+backup
 #output files
 out
-
 #ignore files
 ignore
 
