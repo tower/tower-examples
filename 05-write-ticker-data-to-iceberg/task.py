@@ -6,7 +6,7 @@ import os
 
 
 
-def get_ticker_data(tickers: str, pull_date_str: str) -> pa.Table:
+def get_ticker_data(tickers: str, pull_date_str: str, end_date_str: str) -> pa.Table:
     """
     Download stock data for specific tickers and date from Yahoo Finance.
     
@@ -19,12 +19,17 @@ def get_ticker_data(tickers: str, pull_date_str: str) -> pa.Table:
     """
     # Convert date string to datetime
     pull_date = datetime.strptime(pull_date_str, "%Y-%m-%d")
-    end_date = datetime.now().strftime("%Y-%m-%d")
+    
+    if end_date_str == "":
+        end_date = pull_date + timedelta(days=1)
+        end_date = end_date.strftime("%Y-%m-%d")
+    else:
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
     
     # Download data for all tickers
     data = yf.download(
         tickers,
-        start=pull_date_str,
+        start=pull_date,
         end=end_date,
         group_by='ticker'
     )
@@ -43,7 +48,7 @@ def get_ticker_data(tickers: str, pull_date_str: str) -> pa.Table:
                         'date': date.strftime("%Y-%m-%d"),
                         'open': row['Open'],
                         'close': row['Close'],
-                        'volume': row['Volume']
+                        'volume': int(row['Volume'])
                     })
     
     # Create Polars DataFrame
@@ -53,6 +58,7 @@ def get_ticker_data(tickers: str, pull_date_str: str) -> pa.Table:
 
 def main():
     pull_date_str = os.getenv("PULL_DATE", "")
+    end_date_str = os.getenv("END_DATE", "")
     tickers_str = os.getenv("TICKERS", "")
 
     # Set pull_date_str to yesterday if empty
@@ -69,7 +75,7 @@ def main():
     #   and store into an Arrow Table
     ###
 
-    data = get_ticker_data(tickers_str,pull_date_str)
+    data = get_ticker_data(tickers_str,pull_date_str,end_date_str)
 
 
     ###
@@ -82,7 +88,7 @@ def main():
         ("date", pa.string()),
         ("open", pa.float64()),
         ("close", pa.float64()),
-        ("volume", pa.float64()),
+        ("volume", pa.int64()),
     ])
 
     table = tower.tables("daily_ticker_data").create_if_not_exists(SCHEMA)
