@@ -7,9 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.2.4",
     "scikit-learn>=1.6.1",
-    "tower>=0.3.24",
-    "polars>=1.29.0",
-    "pyiceberg",
+    "tower[all]",
     "pyarrow",
 ]
-
