@@ -44,8 +44,6 @@ dataclasses-json==0.6.7
     # via langchain-community
 distro==1.9.0
     # via openai
-filelock==3.18.0
-    # via huggingface-hub
 frozendict==2.4.6
     # via yfinance
 frozenlist==1.7.0
@@ -53,15 +51,11 @@ frozenlist==1.7.0
     #   aiohttp
     #   aiosignal
 fsspec==2025.3.2
-    # via
-    #   huggingface-hub
-    #   pyiceberg
+    # via pyiceberg
 greenlet==3.2.3 ; (python_full_version < '3.14' and platform_machine == 'AMD64') or (python_full_version < '3.14' and platform_machine == 'WIN32') or (python_full_version < '3.14' and platform_machine == 'aarch64') or (python_full_version < '3.14' and platform_machine == 'amd64') or (python_full_version < '3.14' and platform_machine == 'ppc64le') or (python_full_version < '3.14' and platform_machine == 'win32') or (python_full_version < '3.14' and platform_machine == 'x86_64')
     # via sqlalchemy
 h11==0.16.0
     # via httpcore
-hf-xet==1.1.7 ; platform_machine == 'aarch64' or platform_machine == 'amd64' or platform_machine == 'arm64' or platform_machine == 'x86_64'
-    # via huggingface-hub
 httpcore==1.0.9
     # via httpx
 httpx==0.28.1
@@ -72,8 +66,6 @@ httpx==0.28.1
     #   tower
 httpx-sse==0.4.0
     # via langchain-community
-huggingface-hub==0.34.4
-    # via tower
 idna==3.10
     # via
     #   anyio
@@ -133,16 +125,13 @@ numpy==2.3.0
     #   pandas
     #   yfinance
 ollama==0.5.3
-    # via
-    #   langchain-ollama
-    #   tower
+    # via langchain-ollama
 openai==1.86.0
     # via langchain-openai
 orjson==3.10.18 ; platform_python_implementation != 'PyPy'
     # via langsmith
 packaging==24.2
     # via
-    #   huggingface-hub
     #   langchain-core
     #   langsmith
     #   marshmallow
@@ -173,16 +162,17 @@ pydantic==2.11.4
     #   openai
     #   pydantic-settings
     #   pyiceberg
+    #   tower
 pydantic-core==2.33.2
-    # via pydantic
+    # via
+    #   pydantic
+    #   tower
 pydantic-settings==2.9.1
     # via langchain-community
 pygments==2.19.1
     # via rich
 pyiceberg==0.9.0
-    # via
-    #   13-ticker-update-agent
-    #   tower
+    # via 13-ticker-update-agent
 pyparsing==3.2.3
     # via pyiceberg
 python-dateutil==2.9.0.post0
@@ -198,7 +188,6 @@ pytz==2025.2
     #   yfinance
 pyyaml==6.0.2
     # via
-    #   huggingface-hub
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -206,7 +195,6 @@ regex==2024.11.6
     # via tiktoken
 requests==2.32.3
     # via
-    #   huggingface-hub
     #   langchain
     #   langchain-community
     #   langsmith
@@ -241,17 +229,14 @@ tenacity==9.1.2
     #   pyiceberg
 tiktoken==0.9.0
     # via langchain-openai
-tower==0.3.24
+tower==0.3.37
     # via 13-ticker-update-agent
 tqdm==4.67.1
-    # via
-    #   huggingface-hub
-    #   openai
+    # via openai
 typing-extensions==4.13.2
     # via
     #   anyio
     #   beautifulsoup4
-    #   huggingface-hub
     #   langchain-core
     #   openai
     #   pydantic
