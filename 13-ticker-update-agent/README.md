@@ -53,11 +53,20 @@ brew install llama.cpp
 
 # Run a local inference server (optional) 
 
-We recommend using the following version of the xLAM-2 model from Salesforce. Run this command in a new terminal.
+This agent can be run using different models depending on the available system memory. We recommend using the following versions depending on how much memory is available. 
+
+
+| Model | Approx. RAM required | Recommended for |
+|------|----------------------|-----------------|
+| `bartowski/xLAM-7b-fc-r-GGUF` | ~6–8 GB | Laptops, local debugging |
+| `Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF` | ~20–24 GB | Workstations, servers |
+
+If the larger model does not fit in memory, use the smaller 7B model instead. To run either of these, use the following command in a new terminal and replace HF_MODEL_NAME with `bartowski/xLAM-7b-fc-r-GGUF` or 
+`Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF`. 
 
 ```bash
 llama-server \
-    -hf Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF \
+    -hf HF_MODEL_NAME \
     --port 8080 \
 	--jinja
 ```
@@ -71,12 +80,14 @@ Replace "<TIC1,TIC2,...>" with a list of stock tickers, e.g. "AMZN,MSFT,ORCL".
 
 Replace "< YYYY-MM-DD>" with a date when US stock exchanges were open (e.g. Mon-Fri, except banking holidays).
 
+Replace HF_MODEL_NAME with the model you hosted above.
+
 ```bash
 tower run --local \
 --parameter=USER_INPUT="What was the stock price for each given ticker on a particular day?" \
 --parameter=TICKERS="<TIC1,TIC2,...>" \
 --parameter=PULL_DATE="<YYYY-MM-DD>" \
---parameter=MODEL_TO_USE="Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF" \
+--parameter=MODEL_TO_USE="<HF_MODEL_NAME>" \
 --parameter=INFERENCE_SERVER_BASE_URL="http://127.0.0.1:8080/v1"
 ```
 

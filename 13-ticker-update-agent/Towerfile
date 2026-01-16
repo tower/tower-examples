@@ -20,7 +20,7 @@ default = "NVDA"
 
 [[parameters]]
 name = "PULL_DATE"
-description = "The date of stock data to pull. If no date is entered, the app will take yesterday's date."
+description = "Format: YYYY-MM-DD. The date of stock data to pull. If no date is entered, the app will take yesterday's date."
 default = "2025-06-17"
 
 [[parameters]]

@@ -18,7 +18,7 @@ def get_llm():
     temperature = 0.0 # to avoid randomness in reasoning
 
     if inference_server_base_url:
-        return ChatOpenAI(model=model_to_use, temperature=temperature, base_url=inference_server_base_url)
+        return ChatOpenAI(model=model_to_use, temperature=temperature, base_url=inference_server_base_url, api_key="local-key")
     else:
         return ChatOpenAI(model=model_to_use, temperature=temperature)
 
@@ -28,7 +28,12 @@ def get_ticker_price(TICKER: str, PULL_DATE: str):
     Gets the price for a given ticker and pull date from the database.
     Returns the price value if matching rows are found, None otherwise.
     """
-    table = tower.tables("daily_ticker_data").load()
+    try:
+        table = tower.tables("daily_ticker_data").load()
+    except Exception:
+        print("Table 'daily_ticker_data' does not exist.")
+        return None
+        
     df = table.to_polars()
 
     # Filter for matching ticker and date
