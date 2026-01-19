@@ -34,64 +34,6 @@ Or if you prefer pip:
 uv pip install -e .
 ```
 
-### 3. Set Environment Variables for Local Testing
-
-For local development, set these environment variables:
-
-```bash
-# Snowflake credentials (connection string format)
-export DESTINATION__SNOWFLAKE__CREDENTIALS="snowflake://<user>:<password>@<account>/<database>?warehouse=<warehouse>&role=<role>"
-
-# S3 credentials
-export SOURCES__FILESYSTEM__CREDENTIALS__AWS_ACCESS_KEY_ID="AK..."
-export SOURCES__FILESYSTEM__CREDENTIALS__AWS_SECRET_ACCESS_KEY="..."
-
-# Optional: Override default parameters
-export BUCKET_URL="s3://my-bucket/"
-export FILE_GLOB="path/to/files/*.csv"
-export TARGET_SCHEMA_NAME="raw"
-export TARGET_TABLE_NAME="my_table"
-```
-
-### 4. Run the Pipeline Locally
-
-You can run the pipeline directly with Python:
-
-```bash
-uv run python pipeline.py
-```
-
-Or use **Tower local mode**, which runs the pipeline on your machine while using Tower's secrets management:
-
-```bash
-tower run --local
-```
-
-To override parameters in local mode:
-
-```bash
-tower run --local \
-  --parameter=BUCKET_URL="s3://my-bucket/" \
-  --parameter=FILE_GLOB="data/*.csv" \
-  --parameter=TARGET_TABLE_NAME="my_table"
-```
-
-> **Note:** When using `tower run --local`, Tower will inject secrets from your Tower environment. Make sure you've created the required secrets (see "Create the Secrets" section below).
-
-## Deploying to Tower
-
-### 1. Create the App
-
-```bash
-tower apps create --name=dlthub-s3-to-snowflake
-```
-
-### 2. Deploy the Code
-
-```bash
-tower deploy
-```
-
 ### 3. Create the Secrets
 
 Tower integrates directly with dlt. Create these secrets:
@@ -116,18 +58,45 @@ tower secrets create --name=dlt.sources.filesystem.credentials.aws_secret_access
 > snowflake://loader:mypassword@abc12345.us-east-1/mango_data?warehouse=COMPUTE_WH&role=LOADER_ROLE
 > ```
 
-### 4. Run the App
+### 4. Run the Pipeline Locally
+
+Use **Tower local mode** to run the pipeline on your machine while using Tower's secrets management:
+
+```bash
+tower run --local
+```
+
+To override parameters in local mode:
+
+```bash
+tower run --local \
+  --parameter=BUCKET_URL="s3://my-bucket/" \
+  --parameter=FILE_GLOB="data/*.csv" \
+  --parameter=TARGET_TABLE_NAME="my_table"
+```
+
+> **Note:** When using `tower run --local`, Tower will inject secrets from your Tower environment. Make sure you've created the required secrets (see "Create the Secrets" section above).
+
+## Deploying to Tower
+
+### 1. Create the App
+
+```bash
+tower apps create --name=dlthub-s3-to-snowflake
+```
+
+### 2. Deploy the Code
+
+```bash
+tower deploy
+```
+
+### 3. Run the App
 
 **Run on Tower cloud** (executes on Tower infrastructure):
 
 ```bash
 tower run
-```
-
-**Run locally** (executes on your machine, uses Tower secrets):
-
-```bash
-tower run --local
 ```
 
 **Run with custom parameters** (works with both `--local` and cloud):
