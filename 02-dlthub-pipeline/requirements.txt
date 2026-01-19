@@ -1,2 +1,0 @@
-dlt[snowflake,filesystem]==1.4.0
-pandas

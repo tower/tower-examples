@@ -1,8 +1,0 @@
-[app]
-name = "dlthub-pipeline"
-script = "./pipeline.py"
-source = [
-	"./.dlt/config.toml",
-	"./pipeline.py",
-	"requirements.txt"
-]

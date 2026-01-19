@@ -1,0 +1,10 @@
+[project]
+name = "02-dlthub-s3-to-snowflake"
+version = "0.1.0"
+description = "Load CSV files from S3 to Snowflake using dlt"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dlt[snowflake,filesystem]>=1.20.0",
+    "pandas>=2.0.0",
+]
