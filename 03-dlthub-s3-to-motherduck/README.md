@@ -186,7 +186,7 @@ tower apps show
 ### View Run Logs
 
 ```bash
-tower apps logs dlthub-s3-to-motherduck#1
+tower apps logs "dlthub-s3-to-motherduck#1"
 ```
 
 ## Troubleshooting

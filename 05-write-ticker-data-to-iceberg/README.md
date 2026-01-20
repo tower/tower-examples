@@ -1,41 +1,45 @@
-# Get ticker data from Yahoo Finance and write to Iceberg
+# Write Ticker Data to Iceberg
 
-We use Yahoo Finance's public API and the [yfinance](https://github.com/ranaroussi/yfinance) library to download major indicators for a set of tickers, including Open, Close, and Volume. We save them in an Iceberg table.
+This example demonstrates how to download stock ticker data from Yahoo Finance and write it to an Iceberg table using Tower.
 
-# Schedule 
+## Overview
 
-This app is supposed to be run on a schedule daily. The app is idempotent and can be re-run multiple times with the same parameters.
+The pipeline uses [yfinance](https://github.com/ranaroussi/yfinance) to download daily stock data (open, close, volume) for a list of tickers and stores it in an Iceberg table. The pipeline uses **upsert** to make it idempotent - you can safely re-run it with the same parameters without creating duplicates.
 
-# App Dependencies
+## Prerequisites
 
- The data this app acquires is used by the "analyze-ticker-data-in-iceberg" app to create sell/buy recommendations. This app is complemented by the "trim-ticker-table" app that cleans the "daily_ticker_data" table of old data. 
+- Tower CLI installed
+- An Iceberg catalog configured in Tower (see setup below)
 
-# Deploying app to Tower cloud
+## App Parameters
 
-Tower uses a manifest file called Towerfile to figure out how to deploy your
-app. Review the Towerfile, deploy the code, create secrets or catalogs, and run the app!
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `PULL_DATE` | Date of stock data to pull (YYYY-MM-DD). If empty, uses yesterday's date. | *(empty)* |
+| `END_DATE` | Optional end date. Data is pulled from PULL_DATE up to (but not including) END_DATE. | *(empty)* |
+| `TICKERS` | Comma-separated list of stock tickers | `MSFT,AAPL,GOOGL,NVDA` |
 
-## Creating and deploying the app
+## Setup
 
-Use the following command from the folder where your Towerfile is
+### 1. Install Dependencies
 
 ```bash
-tower deploy
+uv sync
 ```
 
-If the app does not yet exist, Tower will suggest creating it.
+### 2. Configure an Iceberg Catalog
 
-## Defining an Iceberg catalog
+This app writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
 
-You need to tell us about your Iceberg catalog in the [Tower UI](https://app.tower.dev). 
-Use the catalog slug `default` as that's what this sample app expects it to be called.
+1. Go to [app.tower.dev](https://app.tower.dev/)
+2. Navigate to your environment settings
+3. Check if a catalog named `default` already exists; if not, create one
 
-## Running the app
+> **Note:** This app expects a catalog with the name `default`. See the [Tower Iceberg catalog guide](https://docs.tower.dev/docs/concepts/environments#catalogs) for setup instructions.
 
-You can run the app using the Tower CLI. You don't need to specify a name, it
-will figure out what app to run based on the Towerfile.
+### 3. Run the Pipeline Locally
 
-To run locally
+Use **Tower local mode** to run the pipeline on your machine:
 
 ```bash
 tower run --local \
@@ -43,13 +47,103 @@ tower run --local \
   --parameter=TICKERS="MSFT,AAPL,AMZN,GOOGL,NVDA"
 ```
 
-To run on Tower cloud, remove --local
+To pull a range of dates:
 
-## Check the run status
+```bash
+tower run --local \
+  --parameter=PULL_DATE="2025-05-01" \
+  --parameter=END_DATE="2025-05-08" \
+  --parameter=TICKERS="MSFT,AAPL"
+```
 
-You can use the following command to see how the app is progressing. 
+> **Note:** When using `tower run --local`, Tower connects to your configured Iceberg catalog. Make sure the catalog is set up before running.
+
+## Deploying to Tower
+
+### 1. Deploy the App
+
+```bash
+tower deploy
+```
+
+If the app doesn't exist, Tower will prompt you to create it.
+
+### 2. Run the App
+
+**Run on Tower cloud:**
+
+```bash
+tower run
+```
+
+**Run with custom parameters:**
+
+```bash
+tower run \
+  --parameter=PULL_DATE="2025-05-01" \
+  --parameter=TICKERS="MSFT,AAPL,AMZN"
+```
+
+## Schedule
+
+You can configure this app to run automatically on a schedule using the Tower CLI.
+
+**Create a schedule** (runs daily at 9:00 AM UTC):
+
+```bash
+tower schedules create --app=write-ticker-data-to-iceberg --cron="0 9 * * *"
+```
+
+**Create a schedule with parameters:**
+
+```bash
+tower schedules create --app=write-ticker-data-to-iceberg --cron="0 9 * * *" \
+  --parameter=TICKERS="MSFT,AAPL,GOOGL"
+```
+
+## Querying the Data
+
+After running the pipeline, the data is stored in the `daily_ticker_data` table. You can query it using any tool that connects to your Iceberg catalog.
+
+**Table Schema:**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `ticker` | string | Stock ticker symbol (e.g., AAPL) |
+| `date` | string | Date in YYYY-MM-DD format |
+| `open` | float64 | Opening price |
+| `close` | float64 | Closing price |
+| `volume` | int64 | Trading volume |
+
+**Example query (DuckDB):**
+
+```sql
+SELECT ticker, date, open, close, volume
+FROM daily_ticker_data
+WHERE ticker = 'AAPL'
+ORDER BY date DESC
+LIMIT 10;
+```
+
+## Monitoring
+
+### Check Run Status
 
 ```bash
 tower apps show write-ticker-data-to-iceberg
 ```
 
+### View Run Logs
+
+```bash
+tower apps logs "write-ticker-data-to-iceberg#1"
+```
+
+## Related Apps
+
+This app is part of a ticker project:
+
+- **05-write-ticker-data-to-iceberg** (this app) - Acquires daily ticker data
+- **06-analyze-ticker-data-in-iceberg** - Creates buy/sell recommendations from the data
+- **11-trim-ticker-table** - Cleans old data from the table
+- **13-ticker-update-agent** - AI agent that answers stock price questions using cached data
