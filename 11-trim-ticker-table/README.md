@@ -1,52 +1,126 @@
-# Trimming an Iceberg table and removing old data
-This app will inspect the "daily_ticker_data" table and remove all records from it 
-that are older than the specified Time Window parameter. 
+# Trim Ticker Table
 
+This app demonstates deletes from an Iceberg table. It shows how to delete old data from an Iceberg table using Tower.
 
-# Schedule and Dependencies
+## Overview
 
-This app is supposed to be run on a schedule daily. It complements the "write-ticker-data-to-iceberg" app that acquires new daily ticker stats and populates 
-the "daily_ticker_data" table. This app is idempotent and can be re-run multiple times with the same parameters.
+The app inspects the `daily_ticker_data` table and removes all records older than a specified time window. This is useful for maintaining a rolling window of recent data and controlling storage costs.
 
+The app is **idempotent** - you can safely re-run it multiple times with the same parameters.
 
-# Deploying app to Tower cloud
+## App Parameters
 
-Tower uses a manifest file called Towerfile to figure out how to deploy your
-app. Review the Towerfile, deploy the code, create secrets or catalogs, and run the app!
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `TIME_WINDOW_DAYS` | Number of days of history to keep | `31` |
 
-## Creating and deploying the app
+## Prerequisites
 
-Use the following command from the folder where your Towerfile is
+- Tower CLI installed
+- An Iceberg catalog configured in Tower (see setup below)
+- The `daily_ticker_data` table exists (created by example 05)
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+uv sync
+```
+
+### 2. Configure an Iceberg Catalog
+
+This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
+
+1. Go to [app.tower.dev](https://app.tower.dev/)
+2. Navigate to your environment settings
+3. Check if a catalog named `default` already exists; if not, create one
+
+> **Note:** This app expects a catalog with the name `default`. See the [Tower Iceberg catalog guide](https://docs.tower.dev/docs/concepts/environments#catalogs) for setup instructions.
+
+### 3. Run the Pipeline Locally
+
+Use **Tower local mode** to run the pipeline on your machine:
+
+```bash
+tower run --local
+```
+
+Or override the time window:
+
+```bash
+tower run --local \
+  --parameter=TIME_WINDOW_DAYS="14"
+```
+
+> **Note:** When using `tower run --local`, Tower connects to your configured Iceberg catalog. Make sure the catalog is set up before running.
+
+## Deploying to Tower
+
+### 1. Deploy the App
 
 ```bash
 tower deploy
 ```
 
-If the app does not yet exist, Tower will suggest creating it.
+If the app doesn't exist, Tower will prompt you to create it.
 
-## Defining an Iceberg catalog
+### 2. Run the App
 
-You will need to tell us about your Iceberg catalog in the [Tower UI](https://app.tower.dev). Use the catalog slug `default` as that's what this sample app expects it to be called.
-
-## Running the app
-
-You can run the app using the Tower CLI. You don't need to specify a name, it
-will figure out what app to run based on the Towerfile.
-
-To run locally
+**Run on Tower cloud:**
 
 ```bash
-tower run --local \
- --parameter=TIME_WINDOW_DAYS="31"
+tower run
 ```
 
-To run on Tower cloud, remove --local
+**Run with custom parameters:**
 
-## Check the run status
+```bash
+tower run \
+  --parameter=TIME_WINDOW_DAYS="7"
+```
 
-You can use the following command to see how the app is progressing. 
+## Schedule
+
+This app is designed to run on a daily schedule to complement the `write-ticker-data-to-iceberg` app. Together they maintain a rolling window of recent ticker data.
+
+**Create a schedule** (runs daily at 10:00 AM UTC):
+
+```bash
+tower schedules create --app=trim-ticker-table --cron="0 10 * * *"
+```
+
+**List schedules:**
+
+```bash
+tower schedules list --app=trim-ticker-table
+```
+
+**Delete a schedule:**
+
+```bash
+tower schedules delete --app=trim-ticker-table --schedule=<schedule-id>
+```
+
+## Monitoring
+
+### Check Run Status
 
 ```bash
 tower apps show trim-ticker-table
 ```
 
+### View Run Logs
+
+```bash
+tower apps logs "trim-ticker-table#1"
+```
+
+## Related Apps
+
+This app is part of a ticker data project:
+
+- **05-write-ticker-data-to-iceberg** - Acquires daily ticker data from Yahoo Finance
+- **06-analyze-ticker-data-in-iceberg** - Creates buy/sell recommendations from the data
+- **11-trim-ticker-table** (this app) - Cleans old data from the table
+- **13-ticker-update-agent** - AI agent that answers stock price questions using cached data

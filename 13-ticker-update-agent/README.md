@@ -1,117 +1,198 @@
-# Data Agent for Stock Data Retrieval
+# Ticker Update Agent
 
-This agent answers stock price questions and maintains a cache of prices in an Iceberg table.
-If stock prices are not in cache, the agent will fetch them from Yahoo Finance and store in cache for future use.
-The agent is based on the LangChain framework and can use local language models like Salesforce's xLAM-2 for local execution and any other type of LM for cloud execution.
+An AI data agent that answers stock price questions and maintains a cache of prices in an Iceberg table.
 
+## Overview
 
-# Environment Configuration
+This agent uses a data set of stock info (stored in Iceberg) to answer questions about stock prices. If stock information is not in that data set, the agent fetches it from Yahoo Finance and stores it for future use. The agent can run with:
 
-## Secrets
+- **Local inference** - Using llama.cpp or ollama with models like xLAM-2
+- **Cloud inference** - Using OpenAI, DeepSeek, or other providers
 
-Following secrets need to be defined in the environment where this app is running:
-* LANGCHAIN_API_KEY - see [docs](https://docs.smith.langchain.com/administration/how_to_guides/organization_management/create_account_api_key)
+The agent demonstrates how to build **agentic workflows** in Tower that can orchestrate other Tower apps.
 
-(Optional - when using any models remotely served by OpenAI):
-* OPENAI_API_KEY - see [here](https://platform.openai.com/api-keys)
+## App Parameters
 
-## Iceberg catalogs
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `USER_INPUT` | The user query to the agent | `What was the stock price for each given ticker on a particular day?` |
+| `TICKERS` | Comma-separated list of stock tickers | `NVDA` |
+| `PULL_DATE` | Date to pull stock data (YYYY-MM-DD) | `2025-06-17` |
+| `MODEL_TO_USE` | Name of the LLM model to use | `deepseek-ai/DeepSeek-R1` |
+| `INFERENCE_SERVER_BASE_URL` | Base URL of local inference server (leave empty for cloud) | `` |
 
-This example expects an Iceberg catalog with the slug `default`
-to be present in the environment where it is executed.
+## Prerequisites
 
-# Tower app dependencies
+- Tower CLI installed
+- An Iceberg catalog configured in Tower (see setup below)
+- The `daily_ticker_data` table exists (created by example 05)
+- The `write-ticker-data-to-iceberg` app deployed (example 05)
 
-This app uses the "write-ticker-data-to-iceberg" app to acquire new daily ticker stats and populate the "daily_ticker_data" table. It needs to be deployed into the account where this app is going to run.
+## Setup
 
-# Installing dependencies
-
-Run this in the folder where pyproject.toml is located
+### 1. Install Dependencies
 
 ```bash
 uv sync
-uv export --format=requirements-txt --no-hashes > requirements.txt
-pip install -r requirements.txt --upgrade
 ```
 
-# Login to Tower (optional)
+### 2. Create Secrets
 
-If you haven't logged into Tower, or if you are getting "Error: fetching secrets failed" errors
+**Required:**
 
 ```bash
-tower login
+tower secrets create LANGCHAIN_API_KEY "<your-langchain-api-key>"
 ```
 
-# Install a local inference server (optional)
+> Get your LangChain API key from [LangSmith](https://docs.smith.langchain.com/administration/how_to_guides/organization_management/create_account_api_key)
 
-If you are planning to execute this agentic app locally, you should install an inference server (llama.cpp, ollama, vLLM or others).
-We recommend llama.cpp
+**Optional (for OpenAI models):**
+
+```bash
+tower secrets create OPENAI_API_KEY "<your-openai-api-key>"
+```
+
+### 3. Configure an Iceberg Catalog
+
+This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
+
+1. Go to [app.tower.dev](https://app.tower.dev/)
+2. Navigate to your environment settings
+3. Check if a catalog named `default` already exists; if not, create one
+
+> **Note:** This app expects a catalog with the name `default`. See the [Tower Iceberg catalog guide](https://docs.tower.dev/docs/concepts/environments#catalogs) for setup instructions.
+
+### 4. Deploy the Dependency App
+
+This agent calls the `write-ticker-data-to-iceberg` app to fetch missing data. Make sure it's deployed:
+
+```bash
+cd ../05-write-ticker-data-to-iceberg
+tower deploy
+cd ../13-ticker-update-agent
+```
+
+### 5. Set Up Local Inference (Optional)
+
+If running locally, install an inference server. We recommend llama.cpp:
 
 ```bash
 brew install llama.cpp
 ```
 
-# Run a local inference server (optional) 
+Start the server with a model that fits your system:
 
-This agent can be run using different models depending on the available system memory. We recommend using the following versions depending on how much memory is available. 
-
-
-| Model | Approx. RAM required | Recommended for |
-|------|----------------------|-----------------|
+| Model | RAM Required | Recommended For |
+|-------|--------------|-----------------|
 | `bartowski/xLAM-7b-fc-r-GGUF` | ~6–8 GB | Laptops, local debugging |
 | `Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF` | ~20–24 GB | Workstations, servers |
 
-If the larger model does not fit in memory, use the smaller 7B model instead. To run either of these, use the following command in a new terminal and replace HF_MODEL_NAME with `bartowski/xLAM-7b-fc-r-GGUF` or 
-`Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF`. 
-
 ```bash
 llama-server \
-    -hf HF_MODEL_NAME \
+    -hf Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF \
     --port 8080 \
-	--jinja
+    --jinja
 ```
 
-# Run the app locally (optional)
+### 6. Run the Agent Locally
 
-To debug this app, you can run the app locally. 
-You don't need to specify a name, the Tower CLI will figure out what app to run based on the Towerfile.
-
-Replace "<TIC1,TIC2,...>" with a list of stock tickers, e.g. "AMZN,MSFT,ORCL".
-
-Replace "< YYYY-MM-DD>" with a date when US stock exchanges were open (e.g. Mon-Fri, except banking holidays).
-
-Replace HF_MODEL_NAME with the model you hosted above.
+**With local inference:**
 
 ```bash
 tower run --local \
---parameter=USER_INPUT="What was the stock price for each given ticker on a particular day?" \
---parameter=TICKERS="<TIC1,TIC2,...>" \
---parameter=PULL_DATE="<YYYY-MM-DD>" \
---parameter=MODEL_TO_USE="<HF_MODEL_NAME>" \
---parameter=INFERENCE_SERVER_BASE_URL="http://127.0.0.1:8080/v1"
+  --parameter=TICKERS="AMZN,MSFT" \
+  --parameter=PULL_DATE="2025-01-15" \
+  --parameter=MODEL_TO_USE="Leepaper/xLAM-2-32b-fc-r-Q4_K_M-GGUF" \
+  --parameter=INFERENCE_SERVER_BASE_URL="http://127.0.0.1:8080/v1"
 ```
 
-# Deploy the app to Tower cloud
+**With cloud inference (requires OPENAI_API_KEY):**
 
-Tower uses a manifest file called Towerfile to figure out how to deploy your
-app.  Use the following command from the folder where your Towerfile is
+```bash
+tower run --local \
+  --parameter=TICKERS="AMZN,MSFT" \
+  --parameter=PULL_DATE="2025-01-15" \
+  --parameter=MODEL_TO_USE="gpt-4o-mini"
+```
+
+## Deploying to Tower
+
+### 1. Deploy the App
 
 ```bash
 tower deploy
 ```
 
-If the app does not yet exist, Tower will suggest creating it.
+If the app doesn't exist, Tower will prompt you to create it.
 
-# Run the app in Tower cloud
+### 2. Run the App
 
-To run the app in the Tower cloud, pick a model that you have access to. In the below example, we will use "gpt-4o-mini" served by OpenAI.
+**Run on Tower cloud with defaults:**
+
+```bash
+tower run
+```
+
+**Run with custom parameters:**
 
 ```bash
 tower run \
---parameter=USER_INPUT="What was the stock price for each given ticker on a particular day?" \
---parameter=TICKERS="<TIC1,TIC2,...>" \
---parameter=PULL_DATE="<YYYY-MM-DD>" \
---parameter=MODEL_TO_USE="gpt-4o-mini"
+  --parameter=TICKERS="AAPL,GOOGL,NFLX" \
+  --parameter=PULL_DATE="2025-01-15" \
+  --parameter=MODEL_TO_USE="gpt-4o-mini"
 ```
 
+## Monitoring
 
+### Check Run Status
+
+```bash
+tower apps show ticker-update-agent
+```
+
+### View Run Logs
+
+```bash
+tower apps logs "ticker-update-agent#1"
+```
+
+## How It Works
+
+This agent uses a **reasoning loop** powered by a language model specialized in tool calling (such as xLAM or GPT-4). The LLM reasons about each step and decides which tool to invoke:
+
+1. The agent receives a list of tickers and a date as input
+2. For each ticker, the LLM reasons whether data might already be cached
+3. It calls the `check_if_ticker_data_is_already_available` tool to query the Iceberg table
+4. If data exists, the agent extracts the price and moves to the next ticker
+5. If data is missing, the LLM reasons that it needs to fetch from an external source
+6. It calls the `fetch_and_store_data_for_ticker_into_database` tool, which triggers the `write-ticker-data-to-iceberg` app
+7. After processing all tickers, the agent summarizes the results
+
+This **agentic approach** lets the LLM dynamically decide the best path for each ticker, minimizing external API calls by leveraging cached data when available.
+
+## Troubleshooting
+
+### "Error: fetching secrets failed"
+
+Make sure you're logged in:
+
+```bash
+tower login
+```
+
+### Agent stops without processing all tickers
+
+The agent has a maximum of 10 iterations. For many tickers, consider running multiple times or adjusting the `max_iterations` in `agent.py`.
+
+### Local inference model doesn't fit in memory
+
+Use the smaller 7B model instead of the 32B model.
+
+## Related Apps
+
+This app is part of a ticker data project:
+
+- **05-write-ticker-data-to-iceberg** - Acquires daily ticker data from Yahoo Finance
+- **06-analyze-ticker-data-in-iceberg** - Creates buy/sell recommendations from the data
+- **11-trim-ticker-table** - Cleans old data from the table
+- **13-ticker-update-agent** (this app) - AI agent that answers stock price questions using cached data

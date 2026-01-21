@@ -1,0 +1,43 @@
+[app]
+name = "dlthub-s3-to-snowflake"
+script = "./pipeline.py"
+source = [
+	"./.dlt/config.toml",
+	"./pipeline.py",
+	"pyproject.toml"
+]
+
+[[parameters]]
+name = "BUCKET_URL"
+description = "S3 bucket URL (e.g., s3://my-bucket/path/)"
+default = "s3://mango-public-data/"
+
+[[parameters]]
+name = "FILE_GLOB"
+description = "File glob pattern to match files in the bucket"
+default = "japan-trade-stats/custom_2020.csv"
+
+[[parameters]]
+name = "TARGET_SCHEMA_NAME"
+description = "Snowflake schema name to load data into"
+default = "raw"
+
+[[parameters]]
+name = "TARGET_TABLE_NAME"
+description = "Snowflake table name to create/update"
+default = "trade_stats"
+
+[[parameters]]
+name = "WRITE_DISPOSITION"
+description = "How to write data: replace, merge, or append"
+default = "replace"
+
+[[parameters]]
+name = "REPLACE_STRATEGY"
+description = "Strategy for replace: truncate-and-insert or insert-from-staging"
+default = "truncate-and-insert"
+
+[[parameters]]
+name = "MERGE_KEY"
+description = "Column name to use as merge key (required when WRITE_DISPOSITION=merge)"
+default = ""

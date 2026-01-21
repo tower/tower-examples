@@ -1,71 +1,106 @@
-# Make buy/sell recommendations for stocks using LLMs and ticker data in Iceberg tables
+# Analyze Ticker Data in Iceberg
 
-This app uses the Deepseek R1 LLM to come up with buy/sell recommendations based on trends in stock prices and sale volume. The data for stocks is taken from the "daily_ticker_data" Iceberg table, which, in turn, is populated from the Yahoo Finance API.  
+This app uses the Deepseek R1 LLM to generate buy/sell/hold recommendations based on trends in stock prices and trading volume. The data is read from the `daily_ticker_data` Iceberg table, which is populated by the [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) example.
 
-# Schedule 
+## Overview
 
-This app is supposed to be run on a schedule daily. The app is idempotent and can be re-run multiple times with the same parameters.
+The pipeline performs the following steps:
+1. Loads stock data from the `daily_ticker_data` Iceberg table
+2. Computes 7-day and 30-day moving averages, volatility, and trend scores
+3. Filters data to the specified analysis date
+4. Sends the analysis to Deepseek R1 for buy/sell/hold recommendations
 
-# App Dependencies
+## App Parameters
 
-This app takes its data from the "daily_ticker_data" table, which is populated by the "write-ticker-data-to-iceberg" app.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ANALYZE_DATE` | The date to analyze (YYYY-MM-DD format) | Yesterday's date |
 
-## Sign Up for Hugging Face Hub
+## Prerequisites
+
+- A Tower account with an Iceberg catalog configured
+- The `daily_ticker_data` table populated by [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg)
+- A Hugging Face account with an API token
+
+### Sign Up for Hugging Face Hub
 
 1. [Sign up for Hugging Face](https://huggingface.co/join)
 2. Get your [access token](https://huggingface.co/docs/hub/en/security-tokens)
 
-# Deploying app to Tower cloud
+## Setup
 
-Tower uses a manifest file called Towerfile to figure out how to deploy your
-app. Review the Towerfile, deploy the code, create secrets or catalogs, and run the app!
-
-## Creating and deploying the app
-
-Use the following command from the folder where your Towerfile is
+### 1. Install Dependencies
 
 ```bash
-tower deploy
+cd 06-analyze-ticker-data-in-iceberg
+uv sync
 ```
 
-If the app does not yet exist, Tower will suggest creating it.
+### 2. Configure an Iceberg Catalog
 
-## Defining an Iceberg catalog
+Ensure you have an Iceberg catalog named `default` configured in the [Tower UI](https://app.tower.dev). If you haven't created one yet, follow the instructions in the Tower documentation.
 
-You need to tell us about your Iceberg catalog in the [Tower UI](https://app.tower.dev). 
-Use the catalog slug `default` as that's what this sample app expects it to be called.
+### 3. Create the Secrets
 
-## Adding secrets
-
-Add your inference provider and its token as Tower secrets using following commands:
+Add your inference provider credentials as Tower secrets:
 
 ```bash
 tower secrets create --environment="default" \
   --name=TOWER_INFERENCE_ROUTER --value="hugging_face_hub"
 
-tower secrets create --environment="prod" \
+tower secrets create --environment="default" \
   --name=TOWER_INFERENCE_ROUTER_API_KEY --value="[YOUR_HF_TOKEN_HERE]"
 ```
 
-## Running the app
+### 4. Run the Pipeline Locally
 
-You can run the app using the Tower CLI. You don't need to specify a name, it
-will figure out what app to run based on the Towerfile.
-
-To run locally
+Use Tower local mode to run the pipeline while accessing secrets from the Tower Secrets Manager:
 
 ```bash
-tower run --local \
- --parameter=ANALYZE_DATE='2025-04-11'
+tower run --local --parameter=ANALYZE_DATE='2025-04-11'
 ```
 
-To run on Tower cloud, remove --local
+If `ANALYZE_DATE` is not specified, it defaults to yesterday's date.
 
-## Check the run status
+## Deploying to Tower
 
-You can use the following command to see how the app is progressing. 
+### Deploy the App
+
+```bash
+tower deploy
+```
+
+If the app does not yet exist, Tower will prompt you to create it.
+
+### Run the App
+
+To run on Tower cloud:
+
+```bash
+tower run --parameter=ANALYZE_DATE='2025-04-11'
+```
+
+Or without parameters to analyze yesterday's data:
+
+```bash
+tower run
+```
+
+## Monitoring
+
+Check the app status and recent runs:
 
 ```bash
 tower apps show analyze-ticker-data-in-iceberg
 ```
 
+View logs for a specific run (note: quote the run ID because `#` is a special shell character):
+
+```bash
+tower apps logs "analyze-ticker-data-in-iceberg#1"
+```
+
+## Related Apps
+
+- [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) - Populates the `daily_ticker_data` table
+- [13-ticker-update-agent](../13-ticker-update-agent) - AI agent for managing ticker data

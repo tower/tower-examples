@@ -1,0 +1,10 @@
+[project]
+name = "03-dlthub-s3-to-motherduck"
+version = "0.1.0"
+description = "Load CSV files from S3 to MotherDuck using dlt"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dlt[motherduck,filesystem]>=1.20.0",
+    "pandas>=2.0.0",
+]

@@ -31,4 +31,4 @@ default = ""
 [[parameters]]
 name = "MODEL_TO_USE"
 description = "Name of the LLM model to use"
-default = "deepseek-ai/DeepSeek-R1"
+default = "gpt-4o-mini"
