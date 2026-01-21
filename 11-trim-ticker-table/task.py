@@ -18,7 +18,8 @@ def calculate_cutoff_date(df: pl.LazyFrame, time_window_days: int) -> str:
     Returns:
         String representation of the cutoff date in YYYY-MM-DD format
     """
-    max_date = df.select(pl.col("date").str.to_date().max()).collect().item()
+    # Handle both date formats: "YYYY-MM-DD" and "YYYY-MM-DD HH:MM:SS"
+    max_date = df.select(pl.col("date").str.slice(0, 10).str.to_date().max()).collect().item()
     cutoff_date = max_date - timedelta(days=time_window_days)
     return cutoff_date.strftime("%Y-%m-%d")
 
@@ -50,8 +51,8 @@ def main():
     ###
 
     ticker_stats = df.group_by("ticker").agg([
-        pl.count().alias("row_count"),
-        pl.col("date").str.to_date().max().alias("latest_date")
+        pl.len().alias("row_count"),
+        pl.col("date").str.slice(0, 10).str.to_date().max().alias("latest_date")
     ]).collect()    
 
     # Print the stats with a descriptive header

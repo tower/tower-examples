@@ -3,7 +3,7 @@ name = "trim-ticker-table"
 script = "./task.py"
 source = [
 	"./*.py",
-	"./requirements.txt"
+	"./pyproject.toml"
 ]
 
 [[parameters]]
