@@ -34,12 +34,17 @@ def add_trend_column(df: pl.DataFrame) -> pl.DataFrame:
 
     for ticker, group_df in df.group_by("ticker", maintain_order=True):
         closes = group_df["close"].to_list()
-        trends = [None] * 29  # First 29 days have no trend
-
-        for i in range(29, len(closes)):
-            window = closes[i-29:i+1]
-            slope = compute_trend(window)
-            trends.append(slope)
+        num_rows = len(closes)
+        
+        # Handle case where we have fewer than 30 data points
+        if num_rows < 30:
+            trends = [None] * num_rows
+        else:
+            trends = [None] * 29  # First 29 days have no trend
+            for i in range(29, num_rows):
+                window = closes[i-29:i+1]
+                slope = compute_trend(window)
+                trends.append(slope)
 
         group_df = group_df.with_columns(pl.Series("trend_30", trends))
         result.append(group_df)
