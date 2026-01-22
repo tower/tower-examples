@@ -1,6 +1,6 @@
 # Write Ticker Data to Iceberg
 
-This example demonstrates how to download stock ticker data from Yahoo Finance and write it to an Iceberg table using Tower.
+This example demonstrates how to acquire data from an external data source and store it in Iceberg. It downloads stock ticker data from Yahoo Finance and writes it to an Iceberg table using Tower.
 
 ## Overview
 

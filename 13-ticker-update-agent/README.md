@@ -1,6 +1,6 @@
 # Ticker Update Agent
 
-An AI data agent that answers stock price questions and maintains a cache of prices in an Iceberg table.
+This example demonstrates how to deploy and operate a data agent that uses business data for decision making. It creates an AI data agent that answers stock price questions and maintains a cache of prices in an Iceberg table.
 
 ## Overview
 
