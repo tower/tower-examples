@@ -1,0 +1,17 @@
+[app]
+name = "list-catalog-tables"
+script = "./task.py"
+source = [
+	"./*.py",
+	"pyproject.toml"
+]
+
+[[parameters]]
+name = "CATALOG_NAME"
+description = "Name of the Tower Iceberg catalog to list tables from"
+default = "default"
+
+[[parameters]]
+name = "SHOW_DETAILS"
+description = "Show table schema details (true/false)"
+default = "false"

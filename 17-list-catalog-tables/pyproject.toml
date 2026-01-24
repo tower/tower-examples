@@ -1,0 +1,10 @@
+[project]
+name = "17-list-catalog-tables"
+version = "0.1.0"
+description = "List all namespaces and tables in a Tower Iceberg catalog"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyiceberg>=0.8.0",
+    "pyarrow>=18.0.0",
+]
