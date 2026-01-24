@@ -1,0 +1,12 @@
+[project]
+name = "18-read-table-rows"
+version = "0.1.0"
+description = "Read first N rows from an Iceberg table using Tower SDK and Polars"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "tower>=0.3.43",
+    "pyiceberg",
+    "pyarrow",
+    "polars"
+]

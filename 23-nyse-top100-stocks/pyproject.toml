@@ -1,0 +1,13 @@
+[project]
+name = "nyse-top100-stocks"
+version = "0.1.0"
+description = "Downloads daily stock prices and volume for top 100 NYSE stocks from Yahoo Finance and stores in Tower lakehouse"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.29.0",
+    "tower>=0.3.27",
+    "pyiceberg",
+    "pyarrow",
+    "yfinance",
+    "h11>=0.16.0"
+]

@@ -1,0 +1,20 @@
+[app]
+name = "nyse-top100-stocks"
+script = "./task.py"
+source = [
+    "./*.py",
+    "pyproject.toml",
+]
+schedule = ""
+description = "Downloads daily stock prices and volume for top 100 NYSE stocks from Yahoo Finance and stores in Tower lakehouse"
+import_paths = []
+
+[[parameters]]
+name = "PULL_DATE"
+description = "The date to fetch stock data for (YYYY-MM-DD format). Defaults to yesterday if not specified."
+default = ""
+
+[[parameters]]
+name = "TICKERS"
+description = "Optional comma-separated list of tickers to fetch. Defaults to top 100 NYSE stocks if not specified."
+default = ""

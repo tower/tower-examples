@@ -1,0 +1,27 @@
+[app]
+name = "read-table-rows"
+script = "./task.py"
+source = [
+    "./*.py",
+    "pyproject.toml"
+]
+
+[[parameters]]
+name = "CATALOG_NAME"
+description = "Name of the Iceberg catalog"
+default = "default"
+
+[[parameters]]
+name = "NAMESPACE"
+description = "Namespace (schema) containing the table"
+default = "default"
+
+[[parameters]]
+name = "TABLE_NAME"
+description = "Name of the Iceberg table to read"
+default = "daily_ticker_data"
+
+[[parameters]]
+name = "NUM_ROWS"
+description = "Number of rows to return"
+default = "10"
