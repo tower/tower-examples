@@ -5,7 +5,6 @@ description = "This app will span multiple runs of the write-ticker-data-to-iceb
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "tower>=0.3.14",
-    "pyarrow",
+    "tower[iceberg]",
     "h11>=0.16.0"
 ]

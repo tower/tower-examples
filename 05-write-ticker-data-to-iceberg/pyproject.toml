@@ -5,10 +5,7 @@ description = "Downloads ticker data like open, close, volume from YFinance and 
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "polars>=1.29.0",
-    "tower>=0.3.27",
-    "pyiceberg",
-    "pyarrow",
+    "tower[iceberg]",
     "yfinance",
     "h11>=0.16.0"
 ]
