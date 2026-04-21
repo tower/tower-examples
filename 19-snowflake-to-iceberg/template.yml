@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 Bucket and Service Account for Snowflake/Iceberg Transfer
+
+Parameters:
+  PolarisCredential:
+    Type: String
+    NoEcho: true
+    Description: "Polaris catalog credential (client_id:client_secret)"
+  PolarisUri:
+    Type: String
+    Description: Polaris catalog URI
+  PolarisWarehouse:
+    Type: String
+    Description: Polaris catalog warehouse
+
+Resources:
+  DataStageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "snowflake-iceberg-stage-${AWS::AccountId}"
+
+  TowerServiceAccount:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: iceberg-ingest-service-account
+
+  TowerServiceAccountPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: S3AccessPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:DeleteObject
+              - s3:GetBucketLocation
+            Resource: 
+              - !GetAtt DataStageBucket.Arn
+              - !Sub "${DataStageBucket.Arn}/*"
+      Users:
+        - !Ref TowerServiceAccount
+
+  TowerAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref TowerServiceAccount
+
+  # --- EC2 Instance for Iceberg ingestion ---
+
+  IcebergLoaderSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH access to the Iceberg loader instance
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  IcebergLoaderRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: iceberg-loader-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: CloudWatchLogsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt IcebergLoaderLogGroup.Arn
+        - PolicyName: S3DataAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:GetBucketLocation
+                Resource:
+                  - !GetAtt DataStageBucket.Arn
+                  - !Sub "${DataStageBucket.Arn}/*"
+
+  CloudWatchAgentConfig:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /ec2/iceberg-loader/cloudwatch-agent-config
+      Type: String
+      Value: |
+        {
+          "metrics": {
+            "namespace": "IcebergLoader",
+            "metrics_collected": {
+              "mem": {
+                "measurement": ["mem_used_percent", "mem_used", "mem_total"],
+                "metrics_collection_interval": 30
+              },
+              "disk": {
+                "measurement": ["used_percent"],
+                "resources": ["/"],
+                "metrics_collection_interval": 30
+              }
+            },
+            "append_dimensions": {
+              "InstanceId": "${aws:InstanceId}"
+            }
+          }
+        }
+
+  CloudWatchAgentAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: AmazonCloudWatch-ManageAgent
+      Targets:
+        - Key: tag:Name
+          Values:
+            - iceberg-loader
+      Parameters:
+        action: ["configure"]
+        mode: ["ec2"]
+        optionalConfigurationSource: ["ssm"]
+        optionalConfigurationLocation:
+          - !Ref CloudWatchAgentConfig
+
+  IcebergLoaderLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ec2/iceberg-loader
+      RetentionInDays: 7
+
+  IcebergLoaderInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref IcebergLoaderRole
+
+  IcebergLoaderInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: r6i.2xlarge
+      ImageId: resolve:ssm:/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
+      IamInstanceProfile: !Ref IcebergLoaderInstanceProfile
+      SecurityGroups:
+        - !Ref IcebergLoaderSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 250
+            VolumeType: gp3
+      Tags:
+        - Key: Name
+          Value: iceberg-loader
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -ex
+          # Install Docker if missing
+          if ! command -v docker &> /dev/null; then
+            curl -fsSL https://get.docker.com | sh
+          fi
+          systemctl enable docker
+          systemctl start docker
+
+          # Install and configure CloudWatch agent for memory metrics
+          apt-get update && apt-get install -y amazon-cloudwatch-agent
+          /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c ssm:/ec2/iceberg-loader/cloudwatch-agent-config
+
+Outputs:
+  BucketName:
+    Value: !Ref DataStageBucket
+  AccessKeyId:
+    Value: !Ref TowerAccessKey
+  SecretAccessKey:
+    Value: !GetAtt TowerAccessKey.SecretAccessKey
+  InstancePublicIp:
+    Value: !GetAtt IcebergLoaderInstance.PublicIp
+    Description: SSH into the instance with ssh ubuntu@<this-ip>
+  InstanceId:
+    Value: !Ref IcebergLoaderInstance

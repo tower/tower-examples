@@ -1,0 +1,32 @@
+[app]
+name = "snowflake-to-iceberg-load-orchestrator"
+script = "./task.py"
+source = [
+    "./*.py",
+    "pyproject.toml"
+]
+
+[[parameters]]
+name = "TABLE_NAME"
+description = "Fully qualified name of the native snowflake table to read"
+default = "CATALOG_RETURNS"
+
+[[parameters]]
+name = "BUCKET_NAME"
+description = "Name of the s3 bucket where the parquet files are stored"
+default = "snowflake-iceberg-stage-248189900669"
+
+[[parameters]]
+name = "N_PODS"
+description = "Number of parallel worker pods to fan out"
+default = "8"
+
+[[parameters]]
+name = "WORKER_APP"
+description = "Name of the Tower worker app to fan out to"
+default = "s3-to-iceberg"
+
+[[parameters]]
+name = "ENVIRONMENT"
+description = "Tower environment to run workers in (leave empty for default)"
+default = ""

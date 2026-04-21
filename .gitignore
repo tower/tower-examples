@@ -55,6 +55,7 @@ ignore
 07-dlthub-portable-datalake/.user.yml
 07-dlthub-portable-datalake/.python-version
 *.duckdb
+.env
 
 
 

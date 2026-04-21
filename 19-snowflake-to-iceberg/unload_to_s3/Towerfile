@@ -1,0 +1,41 @@
+[app]
+name = "unload-snowflake-table-to-s3"
+script = "./task.py"
+source = [
+    "./*.py",
+    "pyproject.toml"
+]
+
+
+[[parameters]]
+name = "SNOWFLAKE_ACCOUNT"
+description = "Name of the snowflake database to read from"
+default = "jhhgkvi-rr52328"
+
+[[parameters]]
+name = "SNOWFLAKE_USER"
+description = "Name of the snowflake schema to read from"
+default = "SIMONRO"
+
+[[parameters]]
+name = "SNOWFLAKE_WAREHOUSE"
+description = "Name of the snowflake schema to read from"
+default = "COMPUTE_WH"
+
+
+[[parameters]]
+name = "SNOWFLAKE_DATABASE"
+description = "Name of the snowflake database to read from"
+default = "TOWER_LAKEHOUSE"
+
+
+[[parameters]]
+name = "TABLE_NAME"
+description = "Fully qualified name of the native snowflake table table to read"
+default = "SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CATALOG_RETURNS"
+
+[[parameters]]
+name = "STAGE_NAME"
+description = "Name of the s3 stage to unload the table into"
+default = "TEST.PUBLIC.ICEBERG_TRANSFER_STAGE"
+

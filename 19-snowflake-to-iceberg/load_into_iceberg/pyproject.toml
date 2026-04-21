@@ -1,0 +1,14 @@
+[project]
+name = "snowflake-to-iceberg-load-worker"
+version = "0.1.0"
+description = "Load a single partition into iceberg"
+readme = "README.md"
+requires-python = "==3.12.4"
+dependencies = [
+    "tower>=0.3.43",
+    "pyiceberg",
+    "pyarrow",
+    "polars",
+    "duckdb>=1.5.2",
+    "boto3",
+]

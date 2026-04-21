@@ -1,0 +1,23 @@
+[app]
+name = "snowflake-to-iceberg-load-worker"
+script = "./task.py"
+source = [
+    "./*.py",
+    "pyproject.toml"
+]
+
+[[parameters]]
+name = "TABLE_NAME"
+description = "Fully qualified name of the native snowflake table table to read"
+default = "CATALOG_RETURNS"
+
+[[parameters]]
+name = "BUCKET_NAME"
+description = "Name of the s3 bucket where the parquet files are stored"
+default = "snowflake-iceberg-stage-248189900669"
+
+[[parameters]]
+name = "CHUNK_ID"
+description = "Manifest chunk index for parallel mode. Leave empty for single-run mode."
+default = ""
+

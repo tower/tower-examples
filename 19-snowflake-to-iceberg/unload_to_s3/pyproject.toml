@@ -1,0 +1,10 @@
+[project]
+name = "snowflake-to-iceberg-unload"
+version = "0.1.0"
+description = "Unload a Snowflake table to S3 as partitioned Parquet via COPY INTO"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "tower>=0.3.43",
+    "snowflake-connector-python",
+]

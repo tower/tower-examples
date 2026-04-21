@@ -1,0 +1,10 @@
+[project]
+name = "snowflake-to-iceberg-load-orchestrator"
+version = "0.1.0"
+description = "Fan-out orchestrator that splits parquet files by partition and launches parallel Iceberg workers"
+readme = "README.md"
+requires-python = "==3.12.4"
+dependencies = [
+    "tower>=0.3.43",
+    "boto3",
+]
