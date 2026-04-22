@@ -119,14 +119,27 @@ if not catalog.table_exists(f"{namespace}.{table_name}"):
     print(f"Partitioned table {namespace}.{table_name} created in Polaris.")
 
 
+partition_col = os.environ.get('PARTITION_COLUMN', 'CR_RETURNED_DATE_SK')
+iceberg_table = f"polaris_catalog.{namespace}.{table_name}"
+
 if chunk_id is not None:
     # Parallel mode: read only this worker's assigned manifest chunk
     s3 = boto3.client("s3", region_name=region)
     manifest = json.loads(
         s3.get_object(Bucket=bucket_name, Key=f"manifests/chunk_{chunk_id}.json")["Body"].read()
     )
+    # manifest: {partition_value: [file_key, ...], ...}
+    partition_values = list(manifest.keys())
     file_list = [f"s3://{bucket_name}/{key}" for keys in manifest.values() for key in keys]
-    print(f"Chunk {chunk_id}: {len(file_list)} files across {len(manifest)} partitions", flush=True)
+    print(f"Chunk {chunk_id}: {len(file_list)} files across {len(partition_values)} partitions", flush=True)
+
+    # Delete existing data for these partitions (idempotent: safe to retry)
+    placeholders = ", ".join(str(v) for v in partition_values)
+    print(f"Deleting existing data for {len(partition_values)} partition values...", flush=True)
+    con.execute(f"""
+        DELETE FROM {iceberg_table}
+        WHERE {partition_col} IN ({placeholders})
+    """)
 
     con.execute("""
         CREATE VIEW s3_data AS
@@ -142,7 +155,7 @@ else:
 
 print("Ingesting data...", flush=True)
 con.execute(f"""
-    INSERT INTO polaris_catalog.{namespace}.{table_name}
+    INSERT INTO {iceberg_table}
     SELECT * FROM s3_data
 """)
 print("Done!", flush=True)

@@ -21,3 +21,8 @@ name = "CHUNK_ID"
 description = "Manifest chunk index for parallel mode. Leave empty for single-run mode."
 default = ""
 
+[[parameters]]
+name = "PARTITION_COLUMN"
+description = "Column used for hive partitioning in the source parquet files"
+default = "CR_RETURNED_DATE_SK"
+

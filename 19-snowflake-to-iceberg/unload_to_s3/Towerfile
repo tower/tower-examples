@@ -39,3 +39,18 @@ name = "STAGE_NAME"
 description = "Name of the s3 stage to unload the table into"
 default = "TEST.PUBLIC.ICEBERG_TRANSFER_STAGE"
 
+[[parameters]]
+name = "PARTITION_COLUMN"
+description = "Column to use for hive-style partitioning. Leave empty for flat output."
+default = ""
+
+[[parameters]]
+name = "WAREHOUSE_SIZE"
+description = "Resize warehouse to this size before unloading. Leave empty to skip."
+default = ""
+
+[[parameters]]
+name = "WAREHOUSE_SIZE_AFTER"
+description = "Resize warehouse to this size after unloading. Leave empty to skip."
+default = ""
+

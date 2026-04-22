@@ -8,13 +8,28 @@ source = [
 
 [[parameters]]
 name = "TABLE_NAME"
-description = "Fully qualified name of the native snowflake table to read"
+description = "Name of the target Iceberg table"
 default = "CATALOG_RETURNS"
 
 [[parameters]]
+name = "SNOWFLAKE_TABLE"
+description = "Fully qualified Snowflake source table"
+default = "SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CATALOG_RETURNS"
+
+[[parameters]]
+name = "STAGE_NAME"
+description = "Snowflake external stage for the unload"
+default = "TEST.PUBLIC.ICEBERG_TRANSFER_STAGE"
+
+[[parameters]]
 name = "BUCKET_NAME"
-description = "Name of the s3 bucket where the parquet files are stored"
+description = "Name of the S3 bucket where the parquet files are stored"
 default = "snowflake-iceberg-stage-248189900669"
+
+[[parameters]]
+name = "PARTITION_COLUMN"
+description = "Column used for hive partitioning in the source parquet files"
+default = "CR_RETURNED_DATE_SK"
 
 [[parameters]]
 name = "N_PODS"
@@ -22,11 +37,26 @@ description = "Number of parallel worker pods to fan out"
 default = "8"
 
 [[parameters]]
+name = "WAREHOUSE_SIZE"
+description = "Snowflake warehouse size for the unload"
+default = "X-LARGE"
+
+[[parameters]]
+name = "WAREHOUSE_SIZE_AFTER"
+description = "Snowflake warehouse size to scale back to after unload"
+default = "X-SMALL"
+
+[[parameters]]
+name = "UNLOAD_APP"
+description = "Name of the Tower app that unloads Snowflake to S3"
+default = "unload-snowflake-table-to-s3"
+
+[[parameters]]
 name = "WORKER_APP"
 description = "Name of the Tower worker app to fan out to"
-default = "s3-to-iceberg"
+default = "snowflake-to-iceberg-load-worker"
 
 [[parameters]]
 name = "ENVIRONMENT"
 description = "Tower environment to run workers in (leave empty for default)"
-default = ""
+default = "default"

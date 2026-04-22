@@ -23,7 +23,11 @@ def main():
 
     table_name = os.getenv("TABLE_NAME")
     stage_name = os.getenv("STAGE_NAME")
-    
+    warehouse_name = os.getenv("SNOWFLAKE_WAREHOUSE")
+    warehouse_size = os.getenv("WAREHOUSE_SIZE", "")
+    warehouse_size_after = os.getenv("WAREHOUSE_SIZE_AFTER", "")
+    partition_col = os.getenv("PARTITION_COLUMN")
+
     file_format_sql = """
 CREATE OR REPLACE FILE FORMAT my_parquet_format
   TYPE = 'PARQUET'
@@ -33,6 +37,7 @@ CREATE OR REPLACE FILE FORMAT my_parquet_format
     copy_sql = f"""
 COPY INTO @{stage_name}/
 FROM {table_name}
+{f"PARTITION BY ('{partition_col}=' || to_varchar({partition_col}))" if partition_col else ""}
 FILE_FORMAT = (FORMAT_NAME = my_parquet_format)
 HEADER = TRUE
 MAX_FILE_SIZE = 268435456
@@ -40,6 +45,10 @@ MAX_FILE_SIZE = 268435456
 
     try:
         cur = conn.cursor()
+
+        if warehouse_size:
+            print(f"Resizing warehouse {warehouse_name} to {warehouse_size}", flush=True)
+            cur.execute(f"ALTER WAREHOUSE {warehouse_name} SET WAREHOUSE_SIZE = '{warehouse_size}'")
 
         print("Creating file format")
         cur.execute(file_format_sql)
@@ -54,6 +63,9 @@ MAX_FILE_SIZE = 268435456
         for row in results:
             print(f"  {row}")
     finally:
+        if warehouse_size_after:
+            print(f"Resizing warehouse {warehouse_name} back to {warehouse_size_after}", flush=True)
+            cur.execute(f"ALTER WAREHOUSE {warehouse_name} SET WAREHOUSE_SIZE = '{warehouse_size_after}'")
         conn.close()
 
 
