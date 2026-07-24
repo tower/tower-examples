@@ -12,8 +12,8 @@ Swap the query at the bottom of [main.py](./main.py) for your own SQL.
 
 ## What You Need
 
-- A Tower Iceberg catalog containing data (run example 05 first)
-- Three Tower secrets with your Iceberg REST catalog credentials:
+- A Tower-hosted Iceberg catalog containing data (run example 05 first — nothing external to set up)
+- Three Tower secrets with your Tower catalog's REST credentials:
 
 ```bash
 tower secrets create --name=IRC_CLIENT_ID --value="[YOUR_CLIENT_ID]"

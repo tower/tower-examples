@@ -35,16 +35,16 @@ Then pick the example below that matches the problem you're actually trying to s
 
 ### Build a lakehouse on Apache Iceberg
 
-These examples form a small end-to-end lakehouse: ingest → analyze → query → maintain. They share one prerequisite: an Iceberg catalog named `default` in your Tower account ([how to set one up](https://docs.tower.dev)).
+These examples form a small end-to-end lakehouse: ingest → analyze → query → maintain. They share one prerequisite: an Iceberg catalog named `default` — but Tower hosts this catalog for you, so there is nothing external to sign up for. Deploying an example from the [Tower app](https://app.tower.dev) creates it in one click (the same screen can fill required secrets with Tower sandbox values for testing); on the CLI path, create it once in the Tower UI.
 
 | Example | The problem it solves | What you need |
 |---|---|---|
-| [05-write-ticker-data-to-iceberg](./05-write-ticker-data-to-iceberg) | Pull data from an external API on a schedule and land it in an Iceberg table (demo data: stock prices) | Iceberg catalog — no API keys |
-| [06-analyze-ticker-data-in-iceberg](./06-analyze-ticker-data-in-iceberg) | Run LLM-assisted analysis over data already in your lakehouse | Iceberg catalog + inference secrets |
-| [09-run-duckdb-queries-on-iceberg](./09-run-duckdb-queries-on-iceberg) | Query Iceberg tables with plain SQL from DuckDB | Iceberg REST catalog credentials |
-| [11-trim-ticker-table](./11-trim-ticker-table) | Enforce a retention window by deleting old rows from an Iceberg table | Iceberg catalog with data (run 05 first) |
-| [17-list-catalog-tables](./17-list-catalog-tables) | Inspect what namespaces and tables exist in a catalog | Iceberg catalog |
-| [18-read-table-rows](./18-read-table-rows) | Peek at the first rows of any Iceberg table | Iceberg catalog with data |
+| [05-write-ticker-data-to-iceberg](./05-write-ticker-data-to-iceberg) | Pull data from an external API on a schedule and land it in an Iceberg table (demo data: stock prices) | Tower-hosted catalog — no API keys |
+| [06-analyze-ticker-data-in-iceberg](./06-analyze-ticker-data-in-iceberg) | Run LLM-assisted analysis over data already in your lakehouse | Tower-hosted catalog + inference key (or Tower's sandbox key in-app) |
+| [09-run-duckdb-queries-on-iceberg](./09-run-duckdb-queries-on-iceberg) | Query Iceberg tables with plain SQL from DuckDB | Tower-hosted catalog + its REST credentials as secrets |
+| [11-trim-ticker-table](./11-trim-ticker-table) | Enforce a retention window by deleting old rows from an Iceberg table | Tower-hosted catalog with data (run 05 first) |
+| [17-list-catalog-tables](./17-list-catalog-tables) | Inspect what namespaces and tables exist in a catalog | Tower-hosted catalog |
+| [18-read-table-rows](./18-read-table-rows) | Peek at the first rows of any Iceberg table | Tower-hosted catalog with data |
 
 ### Orchestrate many runs
 
@@ -56,8 +56,8 @@ These examples form a small end-to-end lakehouse: ingest → analyze → query �
 
 | Example | The problem it solves | What you need |
 |---|---|---|
-| [07-deepseek-summarize-github](./07-deepseek-summarize-github) | Feed operational data (GitHub issues) to an LLM and get an actionable recommendation back | Iceberg catalog + inference secrets |
-| [13-ticker-update-agent](./13-ticker-update-agent) | Deploy an AI agent that answers questions from — and maintains — business data in your lakehouse | Iceberg catalog + `OPENAI_API_KEY` |
+| [07-deepseek-summarize-github](./07-deepseek-summarize-github) | Feed operational data (GitHub issues) to an LLM and get an actionable recommendation back | Tower-hosted catalog + inference API key |
+| [13-ticker-update-agent](./13-ticker-update-agent) | Deploy an AI agent that answers questions from — and maintains — business data in your lakehouse | Tower-hosted catalog + `OPENAI_API_KEY` (or Tower's sandbox key in-app) |
 
 ### Run dbt in production
 

@@ -18,9 +18,9 @@ The pipeline performs the following steps:
 
 ## Prerequisites
 
-- A Tower account with an Iceberg catalog configured
+- A Tower account with an Iceberg catalog configured (Tower-hosted — created automatically when you deploy from the [Tower app](https://app.tower.dev))
 - The `daily_ticker_data` table populated by [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg)
-- A Hugging Face account with an API token
+- A Hugging Face account with an API token — or skip this and check **Use Tower sandbox value** on the setup screen when deploying from the Tower app
 
 ### Sign Up for Hugging Face Hub
 
@@ -42,7 +42,7 @@ Ensure you have an Iceberg catalog named `default` configured in the [Tower UI](
 
 ### 3. Create the Secrets
 
-Add your inference provider credentials as Tower secrets:
+Deploying from the Tower app? The setup screen can fill these with Tower's sandbox values for testing — no Hugging Face account needed. On the CLI path, add your inference provider credentials as Tower secrets:
 
 ```bash
 tower secrets create --environment="default" \

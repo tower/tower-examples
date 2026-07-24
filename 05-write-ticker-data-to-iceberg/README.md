@@ -9,7 +9,7 @@ The pipeline uses [yfinance](https://github.com/ranaroussi/yfinance) to download
 ## Prerequisites
 
 - Tower CLI installed
-- An Iceberg catalog configured in Tower (see setup below)
+- An Iceberg catalog named `default` — Tower hosts this for you, nothing external to sign up for. Deploying this example from the [Tower app](https://app.tower.dev) creates it in one click; on the CLI path, see setup below.
 
 ## App Parameters
 
@@ -29,7 +29,7 @@ uv sync
 
 ### 2. Configure an Iceberg Catalog
 
-This app writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
+This app writes to an Iceberg table, which requires an Iceberg catalog configured in Tower. The catalog is hosted by Tower — if you deploy this example from the Tower app's examples gallery, it is created for you automatically and you can skip this step. On the CLI path:
 
 1. Go to [app.tower.dev](https://app.tower.dev/)
 2. Navigate to your environment settings

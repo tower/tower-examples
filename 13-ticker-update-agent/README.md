@@ -24,7 +24,7 @@ The agent demonstrates how to build **agentic workflows** in Tower that can orch
 ## Prerequisites
 
 - Tower CLI installed
-- An Iceberg catalog configured in Tower (see setup below)
+- An Iceberg catalog named `default` — Tower hosts this for you; deploying this example from the [Tower app](https://app.tower.dev) creates it (and can set a sandbox `OPENAI_API_KEY`) in one click. On the CLI path, see setup below.
 - The `daily_ticker_data` table exists (created by example 05)
 - The `write-ticker-data-to-iceberg` app deployed (example 05)
 
@@ -52,9 +52,11 @@ tower secrets create LANGCHAIN_API_KEY "<your-langchain-api-key>"
 tower secrets create OPENAI_API_KEY "<your-openai-api-key>"
 ```
 
+> No OpenAI key? When deploying from the Tower app, check **Use Tower sandbox value** on the setup screen to test with Tower's own key.
+
 ### 3. Configure an Iceberg Catalog
 
-This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
+This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower. The catalog is hosted by Tower — if you deploy this example from the Tower app's examples gallery, it is created for you automatically and you can skip this step. On the CLI path:
 
 1. Go to [app.tower.dev](https://app.tower.dev/)
 2. Navigate to your environment settings
