@@ -1,6 +1,6 @@
-# Write Ticker Data to Iceberg
+# Ingest API Data into an Iceberg Table
 
-This example demonstrates how to acquire data from an external data source and store it in Iceberg. It downloads stock ticker data from Yahoo Finance and writes it to an Iceberg table using Tower.
+You need to pull data from an external API on a schedule and land it in your lakehouse — idempotently, so re-runs never create duplicates. This app solves that problem end to end, using stock prices from Yahoo Finance as the demo dataset: it downloads daily ticker data and upserts it into an Iceberg table on Tower.
 
 ## Overview
 

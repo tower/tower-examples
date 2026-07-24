@@ -1,6 +1,6 @@
-# Fan out the downloads of ticker data
+# Fan One Job Out into Parallel Runs
 
-This app will download data for multiple tickers by running parallel runs of the "write-ticker-data-to-iceberg" app. It demonstrates Tower's `run` and `wait` orchestration capabilities.
+You have a job that needs to run once per item — per ticker, per tenant, per file — and running them sequentially is too slow. This app shows Tower's `run` and `wait` orchestration: it downloads data for multiple stock tickers by launching parallel runs of the "write-ticker-data-to-iceberg" app and waiting for them all to finish.
 
 # Schedule 
 

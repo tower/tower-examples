@@ -1,6 +1,6 @@
-# Ticker Update Agent
+# Deploy an AI Agent over Your Business Data
 
-This example demonstrates how to deploy and operate a data agent that uses business data for decision making. It creates an AI data agent that answers stock price questions and maintains a cache of prices in an Iceberg table.
+You want an AI agent that answers questions from your business data — and keeps that data fresh itself. This app deploys a data agent on Tower that answers stock price questions from an Iceberg table, and when the answer isn't there, fetches it from the source and caches it for next time.
 
 ## Overview
 

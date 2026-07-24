@@ -1,6 +1,6 @@
-# Trim Ticker Table
+# Enforce a Retention Window on an Iceberg Table
 
-This app demonstates deletes from an Iceberg table. It shows how to delete old data from an Iceberg table using Tower.
+Tables grow forever unless something deletes the old rows — and storage bills grow with them. This app shows how to delete data from an Iceberg table with Tower: it keeps a rolling window of recent ticker data and drops everything older.
 
 ## Overview
 
