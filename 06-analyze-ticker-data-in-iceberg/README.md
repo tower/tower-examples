@@ -1,6 +1,6 @@
 # Analyze Lakehouse Data with an LLM
 
-You have data accumulating in your lakehouse and want an LLM to reason over it — without exporting it anywhere. This app runs statistical and AI analysis directly on an Iceberg table: it uses the Deepseek R1 LLM to generate buy/sell/hold recommendations from trends in stock prices and trading volume. The data is read from the `daily_ticker_data` Iceberg table, which is populated by the [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) example.
+You have data accumulating in your lakehouse and want an LLM to reason over it — with no export pipeline to build. This app runs statistical analysis directly on an Iceberg table, then sends the derived metrics to the Deepseek R1 LLM to generate buy/sell/hold recommendations from trends in stock prices and trading volume. The data is read from the `daily_ticker_data` Iceberg table, which is populated by the [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) example.
 
 ## Overview
 

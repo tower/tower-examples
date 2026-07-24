@@ -17,6 +17,8 @@ A Tower secret named `SNOWFLAKE_URL` with your Snowflake connection string, in [
 tower secrets create --name=SNOWFLAKE_URL --value="snowflake://user:password@account/database?schema=PUBLIC&warehouse=COMPUTE_WH"
 ```
 
+> **Note:** Inline values like this end up in your shell history. Use a throwaway or sandbox Snowflake user for testing, and avoid pasting production credentials into commands.
+
 ## Run It
 
 ```bash
