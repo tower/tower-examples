@@ -1,10 +1,9 @@
 # Analyze Lakehouse Data with an LLM
 
-You have data accumulating in your lakehouse and want an LLM to reason over it — with no export pipeline to build. This app runs statistical analysis directly on an Iceberg table, then sends the derived metrics to the Deepseek R1 LLM to generate buy/sell/hold recommendations from trends in stock prices and trading volume. The data is read from the `daily_ticker_data` Iceberg table, which is populated by the [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) example.
+You have data accumulating in your lakehouse and want an LLM to reason over it — with no export pipeline to build. This app runs statistical analysis directly on an Iceberg table, then sends the derived metrics to the Deepseek R1 LLM to generate buy/sell/hold recommendations from trends in stock prices and trading volume. Example [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg) populates the `daily_ticker_data` Iceberg table; this app reads it.
 
 ## Overview
 
-The pipeline performs the following steps:
 1. Loads stock data from the `daily_ticker_data` Iceberg table
 2. Computes 7-day and 30-day moving averages, volatility, and trend scores
 3. Filters data to the specified analysis date
@@ -18,9 +17,9 @@ The pipeline performs the following steps:
 
 ## Prerequisites
 
-- A Tower account with an Iceberg catalog configured (Tower-hosted — created automatically when you deploy from the [Tower app](https://app.tower.dev))
+- A Tower account with an Iceberg catalog configured (Tower-hosted, created automatically when you deploy from the [Tower app](https://app.tower.dev))
 - The `daily_ticker_data` table populated by [05-write-ticker-data-to-iceberg](../05-write-ticker-data-to-iceberg)
-- A Hugging Face account with an API token — or skip this and check **Use Tower sandbox value** on the setup screen when deploying from the Tower app
+- A Hugging Face account with an API token, or skip this and check **Use Tower sandbox value** on the setup screen when deploying from the Tower app
 
 ### Sign Up for Hugging Face Hub
 
@@ -42,7 +41,7 @@ Ensure you have an Iceberg catalog named `default` configured in the [Tower UI](
 
 ### 3. Create the Secrets
 
-Deploying from the Tower app? The setup screen can fill these with Tower's sandbox values for testing — no Hugging Face account needed. On the CLI path, add your inference provider credentials as Tower secrets:
+If you deploy from the Tower app, the setup screen can fill these with Tower's sandbox values for testing, so no Hugging Face account is needed. On the CLI path, add your inference provider credentials as Tower secrets:
 
 ```bash
 tower secrets create --environment="default" \

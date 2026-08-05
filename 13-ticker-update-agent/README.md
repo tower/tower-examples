@@ -1,6 +1,6 @@
 # Deploy an AI Agent over Your Business Data
 
-You want an AI agent that answers questions from your business data — and keeps that data fresh itself. This app deploys a data agent on Tower that answers stock price questions from an Iceberg table, and when the answer isn't there, fetches it from the source and caches it for next time.
+You want an AI agent that answers questions from your business data, and keeps that data fresh itself. This app deploys a data agent on Tower that answers stock price questions from an Iceberg table, and when the answer isn't there, fetches it from the source and caches it for next time.
 
 ## Overview
 
@@ -9,7 +9,7 @@ This agent uses a data set of stock info (stored in Iceberg) to answer questions
 - **Local inference** - Using llama.cpp or ollama with models like xLAM-2
 - **Cloud inference** - Using OpenAI, DeepSeek, or other providers
 
-The agent demonstrates how to build **agentic workflows** in Tower that can orchestrate other Tower apps.
+The agent runs other Tower apps as tools.
 
 ## App Parameters
 
@@ -24,7 +24,7 @@ The agent demonstrates how to build **agentic workflows** in Tower that can orch
 ## Prerequisites
 
 - Tower CLI installed
-- An Iceberg catalog named `default` — Tower hosts this for you; deploying this example from the [Tower app](https://app.tower.dev) creates it (and can set a sandbox `OPENAI_API_KEY`) in one click. On the CLI path, see setup below.
+- An Iceberg catalog named `default`, which Tower hosts for you; deploying this example from the [Tower app](https://app.tower.dev) creates it (and can set a sandbox `OPENAI_API_KEY`) in one click. On the CLI path, see setup below.
 - The `daily_ticker_data` table exists (created by example 05)
 - The `write-ticker-data-to-iceberg` app deployed (example 05)
 
@@ -56,7 +56,7 @@ tower secrets create OPENAI_API_KEY "<your-openai-api-key>"
 
 ### 3. Configure an Iceberg Catalog
 
-This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower. The catalog is hosted by Tower — if you deploy this example from the Tower app's examples gallery, it is created for you automatically and you can skip this step. On the CLI path:
+This app reads from and writes to an Iceberg table, which requires an Iceberg catalog configured in Tower. Tower hosts the catalog; deploying this example from the Tower app's examples gallery creates it automatically, so you can skip this step. On the CLI path:
 
 1. Go to [app.tower.dev](https://app.tower.dev/)
 2. Navigate to your environment settings
@@ -160,7 +160,7 @@ tower apps logs "ticker-update-agent#1"
 
 ## How It Works
 
-This agent uses a **reasoning loop** powered by a language model specialized in tool calling (such as xLAM or GPT-4). The LLM reasons about each step and decides which tool to invoke:
+This agent uses a reasoning loop powered by a language model specialized in tool calling (such as xLAM or GPT-4). The LLM reasons about each step and decides which tool to invoke:
 
 1. The agent receives a list of tickers and a date as input
 2. For each ticker, the LLM reasons whether data might already be cached
@@ -170,7 +170,7 @@ This agent uses a **reasoning loop** powered by a language model specialized in 
 6. It calls the `fetch_and_store_data_for_ticker_into_database` tool, which triggers the `write-ticker-data-to-iceberg` app
 7. After processing all tickers, the agent summarizes the results
 
-This **agentic approach** lets the LLM dynamically decide the best path for each ticker, minimizing external API calls by leveraging cached data when available.
+The LLM decides the best path for each ticker. It calls the external API only when the data is not already cached.
 
 ## Troubleshooting
 
@@ -184,7 +184,7 @@ tower login
 
 ### Agent stops without processing all tickers
 
-The agent has a maximum of 10 iterations. For many tickers, consider running multiple times or adjusting the `max_iterations` in `agent.py`.
+The agent has a maximum of 10 iterations. Run it again, or raise `max_iterations` in `agent.py`.
 
 ### Local inference model doesn't fit in memory
 

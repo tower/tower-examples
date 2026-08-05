@@ -7,7 +7,7 @@ You need to move data into a warehouse without writing pipeline code. This app u
 1. Reads the replication config from [sling.yaml](./sling.yaml) (source: the bundled [data/input.json](./data/input.json); target: `PUBLIC.SLING_JSON_TOWER_DEMO`)
 2. Runs the replication in `full-refresh` mode
 
-Point `sling.yaml` at your own sources and targets — Sling supports databases, object stores, and files.
+Point `sling.yaml` at your own sources and targets; Sling supports databases, object stores, and files.
 
 ## What You Need
 

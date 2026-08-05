@@ -1,10 +1,10 @@
 # Tower Examples
 
-Working example apps for [Tower](https://tower.dev), each built around a common data problem. Every example is a complete Tower app — a few Python files plus a `Towerfile` — that you can clone, deploy, and run in minutes, then adapt to your own stack.
+Working example apps for [Tower](https://tower.dev), each built around a common data problem. Every example is a complete Tower app (a few Python files plus a `Towerfile`) that you can clone, deploy, and run in minutes, then adapt to your own stack.
 
 ## Quick start
 
-Install the [Tower CLI](https://docs.tower.dev/getting-started/installation), sign in, and run the first example — it needs no secrets and no setup:
+Install the [Tower CLI](https://docs.tower.dev/getting-started/installation), sign in, and run the first example. It needs no secrets and no setup:
 
 ```bash
 git clone https://github.com/tower/tower-examples.git
@@ -14,11 +14,11 @@ tower deploy
 tower run
 ```
 
-Then pick the example below that matches the problem you're actually trying to solve.
+Then pick the example below that matches the problem you're trying to solve.
 
 ## Find your problem
 
-### Start here — runs with zero setup
+### Start here: zero setup
 
 | Example | The problem it solves | What you need |
 |---|---|---|
@@ -35,7 +35,7 @@ Then pick the example below that matches the problem you're actually trying to s
 
 ### Build a lakehouse on Apache Iceberg
 
-These examples form a small end-to-end lakehouse: ingest → analyze → query → maintain. They share one prerequisite: an Iceberg catalog named `default` — but Tower hosts this catalog for you, so there is nothing external to sign up for. Deploying an example from the [Tower app](https://app.tower.dev) creates it in one click (the same screen can fill required secrets with Tower sandbox values for testing); on the CLI path, create it once in the Tower UI.
+These examples form a small end-to-end lakehouse: ingest → analyze → query → maintain. They share one prerequisite: an Iceberg catalog named `default`, but Tower hosts this catalog for you, so there is nothing external to sign up for. Deploying an example from the [Tower app](https://app.tower.dev) creates it in one click (the same screen can fill required secrets with Tower sandbox values for testing); on the CLI path, create it once in the Tower UI.
 
 | Example | The problem it solves | What you need |
 |---|---|---|
@@ -57,7 +57,7 @@ These examples form a small end-to-end lakehouse: ingest → analyze → query �
 | Example | The problem it solves | What you need |
 |---|---|---|
 | [07-deepseek-summarize-github](./07-deepseek-summarize-github) | Feed operational data (GitHub issues) to an LLM and get an actionable recommendation back | Tower-hosted catalog + inference API key |
-| [13-ticker-update-agent](./13-ticker-update-agent) | Deploy an AI agent that answers questions from — and maintains — business data in your lakehouse | Tower-hosted catalog + `OPENAI_API_KEY` (or Tower's sandbox key in-app) |
+| [13-ticker-update-agent](./13-ticker-update-agent) | Deploy an AI agent that answers questions from your business data and keeps it fresh | Tower-hosted catalog + `OPENAI_API_KEY` (or Tower's sandbox key in-app) |
 
 ### Run dbt in production
 

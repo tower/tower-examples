@@ -12,7 +12,7 @@ Swap the query at the bottom of [main.py](./main.py) for your own SQL.
 
 ## What You Need
 
-- A Tower-hosted Iceberg catalog containing data (run example 05 first — nothing external to set up)
+- A Tower-hosted Iceberg catalog containing data (run example 05 first, nothing external to set up)
 - Three Tower secrets with your Tower catalog's REST credentials:
 
 ```bash
