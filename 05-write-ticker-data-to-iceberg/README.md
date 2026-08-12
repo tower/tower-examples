@@ -1,15 +1,15 @@
-# Write Ticker Data to Iceberg
+# Ingest API Data into an Iceberg Table
 
-This example demonstrates how to acquire data from an external data source and store it in Iceberg. It downloads stock ticker data from Yahoo Finance and writes it to an Iceberg table using Tower.
+You need to pull data from an external API on a schedule and land it in your lakehouse — idempotently, so re-runs never create duplicates. This app solves that problem end to end, using stock prices from Yahoo Finance as the demo dataset: it downloads daily ticker data and upserts it into an Iceberg table on Tower.
 
 ## Overview
 
-The pipeline uses [yfinance](https://github.com/ranaroussi/yfinance) to download daily stock data (open, close, volume) for a list of tickers and stores it in an Iceberg table. The pipeline uses **upsert** to make it idempotent - you can safely re-run it with the same parameters without creating duplicates.
+The pipeline uses [yfinance](https://github.com/ranaroussi/yfinance) to download daily stock data (open, close, volume) for a list of tickers and upserts it into an Iceberg table.
 
 ## Prerequisites
 
 - Tower CLI installed
-- An Iceberg catalog configured in Tower (see setup below)
+- An Iceberg catalog named `default`, which Tower hosts for you, with nothing external to sign up for. Deploying this example from the [Tower app](https://app.tower.dev) creates it in one click; on the CLI path, see setup below.
 
 ## App Parameters
 
@@ -29,7 +29,7 @@ uv sync
 
 ### 2. Configure an Iceberg Catalog
 
-This app writes to an Iceberg table, which requires an Iceberg catalog configured in Tower.
+This app writes to an Iceberg table, which requires an Iceberg catalog configured in Tower. Tower hosts the catalog; deploying this example from the Tower app's examples gallery creates it automatically, so you can skip this step. On the CLI path:
 
 1. Go to [app.tower.dev](https://app.tower.dev/)
 2. Navigate to your environment settings
@@ -39,7 +39,7 @@ This app writes to an Iceberg table, which requires an Iceberg catalog configure
 
 ### 3. Run the Pipeline Locally
 
-Use **Tower local mode** to run the pipeline on your machine:
+Use Tower local mode to run the pipeline on your machine:
 
 ```bash
 tower run --local \

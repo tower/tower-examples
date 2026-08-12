@@ -1,21 +1,21 @@
-# Fan out the downloads of ticker data
+# Fan One Job Out into Parallel Runs
 
-This app will download data for multiple tickers by running parallel runs of the "write-ticker-data-to-iceberg" app. It demonstrates Tower's `run` and `wait` orchestration capabilities.
+You have a job that needs to run once per item — per ticker, per tenant, per file — and running them sequentially is too slow. This app shows Tower's `run` and `wait` orchestration: it downloads data for multiple stock tickers by launching parallel runs of the "write-ticker-data-to-iceberg" app and waiting for them all to finish.
 
-# Schedule 
+## Schedule
 
-This app is supposed to be run on a schedule daily. The app is idempotent and can be re-run multiple times with the same parameters.
+Run this daily on a schedule. The app is idempotent and can be re-run multiple times with the same parameters.
 
-# App Dependencies
+## App Dependencies
 
 This app will run multiple instances of the "write-ticker-data-to-iceberg" app in parallel, and with different parameters. 
 
-# Deploying app to Tower cloud
+## Deploying app to Tower cloud
 
 Tower uses a manifest file called Towerfile to figure out how to deploy your
 app. Review the Towerfile, deploy the code, create secrets or catalogs, and run the app!
 
-## Creating and deploying the app
+### Creating and deploying the app
 
 Use the following command from the folder where your Towerfile is
 
@@ -25,7 +25,7 @@ tower deploy
 
 If the app does not yet exist, Tower will suggest creating it.
 
-## Running the app
+### Running the app
 
 You can run the app using the Tower CLI. You don't need to specify a name, it
 will figure out what app to run based on the Towerfile.
@@ -40,7 +40,7 @@ tower run --local \
 
 To run on Tower cloud, remove --local
 
-## Check the run status
+### Check the run status
 
 You can use the following command to see how the app is progressing. 
 

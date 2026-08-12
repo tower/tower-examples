@@ -1,12 +1,12 @@
-# Trim Ticker Table
+# Enforce a Retention Window on an Iceberg Table
 
-This app demonstates deletes from an Iceberg table. It shows how to delete old data from an Iceberg table using Tower.
+Tables grow forever unless something deletes the old rows, and storage bills grow with them. This app shows how to delete data from an Iceberg table with Tower: it keeps a rolling window of recent ticker data and drops everything older.
 
 ## Overview
 
-The app inspects the `daily_ticker_data` table and removes all records older than a specified time window. This is useful for maintaining a rolling window of recent data and controlling storage costs.
+The app inspects the `daily_ticker_data` table and removes all records older than a specified time window.
 
-The app is **idempotent** - you can safely re-run it multiple times with the same parameters.
+The app is idempotent, so you can safely re-run it multiple times with the same parameters.
 
 ## App Parameters
 
@@ -40,7 +40,7 @@ This app reads from and writes to an Iceberg table, which requires an Iceberg ca
 
 ### 3. Run the Pipeline Locally
 
-Use **Tower local mode** to run the pipeline on your machine:
+Use Tower local mode to run the pipeline on your machine:
 
 ```bash
 tower run --local
@@ -82,7 +82,7 @@ tower run \
 
 ## Schedule
 
-This app is designed to run on a daily schedule to complement the `write-ticker-data-to-iceberg` app. Together they maintain a rolling window of recent ticker data.
+Run this daily alongside the `write-ticker-data-to-iceberg` app. Together they maintain a rolling window of recent ticker data.
 
 **Create a schedule** (runs daily at 10:00 AM UTC):
 
